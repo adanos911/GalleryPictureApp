@@ -1,18 +1,21 @@
 package com.ayanot.discoveryourfantasy.entity;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ayanot.discoveryourfantasy.MainActivity;
 import com.ayanot.discoveryourfantasy.R;
+import com.etsy.android.grid.util.DynamicHeightImageView;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 import com.squareup.picasso.UrlConnectionDownloader;
 
 import java.io.IOException;
@@ -40,6 +43,10 @@ public class ImageRecycleAdapter extends RecyclerView.Adapter<ImageRecycleAdapte
         return new ViewHolder(view);
     }
 
+    public Image getItem(int position) {
+        return images.get(position);
+    }
+
     private static Picasso getImageLoader(Context ctx) {
         Picasso.Builder builder = new Picasso.Builder(ctx);
 
@@ -54,24 +61,10 @@ public class ImageRecycleAdapter extends RecyclerView.Adapter<ImageRecycleAdapte
         return builder.build();
     }
 
-    public Image getItem(int position) {
-        return images.get(position);
-    }
-
-    @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Image image = images.get(position);
-        ImageView imageView = holder.imageView;
-
-        getImageLoader(context).load(image.getPreview())
-                .into(imageView);
-    }
-
     @Override
     public long getItemId(int position) {
         return position;
     }
-
     @Override
     public int getItemViewType(int position) {
         return position;
@@ -90,13 +83,25 @@ public class ImageRecycleAdapter extends RecyclerView.Adapter<ImageRecycleAdapte
         return images.size();
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder {
-        ImageView imageView;
+    @Override
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        Image image = images.get(position);
+//        ImageView imageView = holder.imageView;
+//        getImageLoader(context).load(image.getPreview())
+//                .into(imageView);
+        getImageLoader(context).load(image.getPreview())
+                .into(holder.dynamicHeightImageView);
+    }
+
+    class ViewHolder extends RecyclerView.ViewHolder implements Target {
+        //        ImageView imageView;
+        DynamicHeightImageView dynamicHeightImageView;
 
         ViewHolder(final View itemView) {
             super(itemView);
-            imageView = itemView.findViewById(R.id.imageItem);
-            imageView.setOnClickListener(new View.OnClickListener() {
+//            imageView = itemView.findViewById(R.id.imageItem);
+            dynamicHeightImageView = itemView.findViewById(R.id.dynamicImage);
+            dynamicHeightImageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (listener != null) {
@@ -107,5 +112,23 @@ public class ImageRecycleAdapter extends RecyclerView.Adapter<ImageRecycleAdapte
                 }
             });
         }
+
+        @Override
+        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+            float ratio = (float) bitmap.getHeight() / (float) bitmap.getWidth();
+            dynamicHeightImageView.setHeightRatio(ratio);
+            dynamicHeightImageView.setImageBitmap(bitmap);
+        }
+
+        @Override
+        public void onBitmapFailed(Drawable errorDrawable) {
+
+        }
+
+        @Override
+        public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+        }
+
     }
 }

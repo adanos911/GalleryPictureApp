@@ -4,10 +4,15 @@
     android:layout_height="200dp"
     android:layout_margin="2dp">
 
-    <ImageView
-        android:id="@+id/imageItem"
+    <!--    <ImageView-->
+    <!--        android:id="@+id/imageItem"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:layout_width="wrap_content"-->
+    <!--        android:layout_gravity="center" />-->
+
+    <com.etsy.android.grid.util.DynamicHeightImageView
+        android:id="@+id/dynamicImage"
         android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:layout_gravity="center" />
+        android:layout_width="wrap_content" />
 
 </androidx.cardview.widget.CardView>
