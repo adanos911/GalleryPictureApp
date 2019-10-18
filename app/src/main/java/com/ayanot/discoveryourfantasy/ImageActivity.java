@@ -1,16 +1,16 @@
 package com.ayanot.discoveryourfantasy;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.io.IOException;
-import java.io.InputStream;
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.ayanot.discoveryourfantasy.entity.Image;
+import com.squareup.picasso.Picasso;
 
 public class ImageActivity extends AppCompatActivity {
+    private static final String TAG = "ImageActivity";
 
     ImageView imageView;
     TextView descriptionImage;
@@ -18,31 +18,16 @@ public class ImageActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_image);
 
         imageView = findViewById(R.id.fullScreenImage);
         descriptionImage = findViewById(R.id.descriptionImage);
 
-        String imgName = getIntent().getExtras().getString("IMAGE_NAME");
-        descriptionImage.setText(imgName.split("\\.")[0]);
+        Image image = getIntent().getExtras().getParcelable(Image.class.getSimpleName());
 
-        InputStream inputStream = null;
-        try {
-            inputStream = getApplicationContext().getAssets().open("images/" + imgName);
-            Drawable drawable = Drawable.createFromStream(inputStream,null);
-            imageView.setImageDrawable(drawable);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (inputStream != null) {
-                try {
-                    inputStream.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
+        descriptionImage.setText(image.getName().split("\\.")[0]);
+
+        Picasso.with(this).load(image.getHref()).into(imageView);
 
 //        imageView.setImageResource();
     }

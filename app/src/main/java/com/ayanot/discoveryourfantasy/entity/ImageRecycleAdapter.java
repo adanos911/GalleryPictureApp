@@ -1,7 +1,7 @@
 package com.ayanot.discoveryourfantasy.entity;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,10 +10,13 @@ import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.ayanot.discoveryourfantasy.MainActivity;
 import com.ayanot.discoveryourfantasy.R;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.UrlConnectionDownloader;
 
 import java.io.IOException;
-import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.util.List;
 
 public class ImageRecycleAdapter extends RecyclerView.Adapter<ImageRecycleAdapter.ViewHolder> {
@@ -24,6 +27,7 @@ public class ImageRecycleAdapter extends RecyclerView.Adapter<ImageRecycleAdapte
 
     public ImageRecycleAdapter(List<Image> images) {
         this.images = images;
+        setHasStableIds(true);
     }
 
     @NonNull
@@ -36,42 +40,54 @@ public class ImageRecycleAdapter extends RecyclerView.Adapter<ImageRecycleAdapte
         return new ViewHolder(view);
     }
 
+    private static Picasso getImageLoader(Context ctx) {
+        Picasso.Builder builder = new Picasso.Builder(ctx);
 
-    @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Image image = images.get(position);
-
-        ImageView imageView = holder.imageView;
-        InputStream inputStream = null;
-        try {
-            inputStream = context.getApplicationContext().getAssets().open("images/" + image.getName());
-            imageView.setImageDrawable(Drawable.createFromStream(inputStream, null));
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (inputStream != null) {
-                try {
-                    inputStream.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+        builder.downloader(new UrlConnectionDownloader(ctx) {
+            @Override
+            protected HttpURLConnection openConnection(Uri uri) throws IOException {
+                HttpURLConnection connection = super.openConnection(uri);
+                connection.setRequestProperty("Authorization", "OAuth " + MainActivity.TOKEN);
+                return connection;
             }
-        }
+        });
+        return builder.build();
     }
 
     public Image getItem(int position) {
         return images.get(position);
     }
+
     @Override
-    public int getItemCount() {
-        return images.size();
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        Image image = images.get(position);
+        ImageView imageView = holder.imageView;
+
+        getImageLoader(context).load(image.getPreview())
+                .into(imageView);
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return position;
     }
 
     public interface OnItemClickListener {
         void onItemClick(View itemView, int position);
     }
+
     public void setOnItemClickListener(OnItemClickListener listener) {
         this.listener = listener;
+    }
+
+    @Override
+    public int getItemCount() {
+        return images.size();
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {

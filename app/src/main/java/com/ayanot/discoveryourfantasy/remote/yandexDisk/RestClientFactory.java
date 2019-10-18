@@ -1,10 +1,11 @@
 package com.ayanot.discoveryourfantasy.remote.yandexDisk;
 
-import com.yandex.disk.rest.RestClient;
+
+import com.ayanot.discoveryourfantasy.RestClient;
 
 public class RestClientFactory {
 
-    public static RestClient getInstance(final Credentials credentials) {
+    public static com.ayanot.discoveryourfantasy.RestClient getInstance(final Credentials credentials) {
         return new RestClient(credentials);
     }
 }

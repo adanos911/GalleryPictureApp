@@ -1,19 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/main_activity"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:id="@+id/main_activity">
+    android:layout_height="match_parent">
 
-    <!--    <fragment-->
-    <!--        android:id="@+id/contentImageFragment"-->
-    <!--        android:layout_width="match_parent"-->
-    <!--        android:layout_height="match_parent"-->
-    <!--        android:name="com.ayanot.discoveryourfantasy.ContentImageFragment" />-->
-
-
-    <WebView
-        android:id="@+id/urlOAuth"
+    <fragment
+        android:id="@+id/contentImageFragment"
+        android:name="com.ayanot.discoveryourfantasy.ContentImageFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+
+    <!--        <ImageView-->
+    <!--            android:id="@+id/testImage"-->
+    <!--            android:layout_width="match_parent"-->
+    <!--            android:layout_height="match_parent" />-->
+
+    <!--    <WebView-->
+    <!--        android:id="@+id/urlOAuth"-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="match_parent" />-->
 
 </RelativeLayout>
