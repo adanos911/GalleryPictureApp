@@ -1,4 +1,4 @@
-package com.ayanot.discoveryourfantasy;
+package com.ayanot.discoveryourfantasy.remote.yandexDisk;
 
 import com.squareup.okhttp.OkHttpClient;
 import com.yandex.disk.rest.Credentials;

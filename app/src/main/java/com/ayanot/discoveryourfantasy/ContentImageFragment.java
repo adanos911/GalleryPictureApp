@@ -12,26 +12,24 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.ayanot.discoveryourfantasy.entity.Image;
-import com.ayanot.discoveryourfantasy.entity.ImageRecycleAdapter;
-import com.ayanot.discoveryourfantasy.remote.yandexDisk.Credentials;
-import com.ayanot.discoveryourfantasy.remote.yandexDisk.RestClientFactory;
+import com.ayanot.discoveryourfantasy.entity.adapter.ImageRecycleAdapter;
+import com.ayanot.discoveryourfantasy.entity.adapter.SpacesItemDecoration;
 import com.yandex.disk.rest.ResourcesArgs;
-import com.yandex.disk.rest.exceptions.NetworkIOException;
-import com.yandex.disk.rest.exceptions.ServerIOException;
 import com.yandex.disk.rest.json.Resource;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.ayanot.discoveryourfantasy.MainActivity.REST_CLIENT;
+
 public class ContentImageFragment extends Fragment {
     private static final String TAG = "ContentImageFragment";
 
     RecyclerView recyclerView;
-    private RestClient restClient;
 
     @Nullable
     @Override
@@ -40,29 +38,8 @@ public class ContentImageFragment extends Fragment {
         final View view = inflater.inflate(R.layout.content_image_fragment, container, false);
 
         recyclerView = view.findViewById(R.id.recycleView);
-
-        restClient = RestClientFactory.getInstance(new Credentials(MainActivity.USER_NAME, MainActivity.TOKEN));
         try {
-            List<Image> images = new AsyncRequestHref().execute("/Израиль").get();
-
-            final ImageRecycleAdapter imageRecycleAdapter = new ImageRecycleAdapter(images);
-            recyclerView.setHasFixedSize(true);
-            imageRecycleAdapter.setOnItemClickListener(new ImageRecycleAdapter.OnItemClickListener() {
-                @Override
-                public void onItemClick(View itemView, int position) {
-                    Image image = imageRecycleAdapter.getItem(position);
-                    new AsyncDownloadImage().execute(image);
-                    //FIXME: DELETE THREAD SLEEP!!!
-                    SystemClock.sleep(1000);
-                    Intent intent = new Intent(getActivity(), ImageActivity.class);
-                    intent.putExtra(Image.class.getSimpleName(), image);
-                    startActivity(intent);
-                }
-            });
-//        recyclerView.setNestedScrollingEnabled(false);
-            recyclerView.setAdapter(imageRecycleAdapter);
-            recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
-
+            new AsyncRequestHref().execute("/Израиль").get();
         } catch (Exception e) {
             Log.d(TAG, e.getMessage());
             e.printStackTrace();
@@ -71,49 +48,68 @@ public class ContentImageFragment extends Fragment {
         return view;
     }
 
-    private List<Image> getListImageFromYandexDisk(RestClient restClient, String path) {
-        Resource resources;
-        List<Image> images = new ArrayList<>();
-        try {
-            resources = restClient.getResources(new ResourcesArgs.Builder()
-                    .setPath(path)
-                    .setLimit(Integer.MAX_VALUE)
-                    .setPreviewSize("L")
-                    .build());
-            List<Resource> items = resources.getResourceList().getItems();
-            for (Resource item : items) {
-                String itemName = item.getName();
-                if (itemName.contains(".jpg")) {
-                    images.add(new Image(itemName, item.getPreview(), "",
-                            path + "/" + itemName));
+    class AsyncRequestHref extends AsyncTask<String, Image, List<Image>> {
+        ImageRecycleAdapter imageRecycleAdapter;
+        List<Image> imagesList = new ArrayList<>();
+
+        @Override
+        protected void onPreExecute() {
+            imageRecycleAdapter = new ImageRecycleAdapter(imagesList);
+            recyclerView.setHasFixedSize(true);
+            imageRecycleAdapter.setOnItemClickListener(new ImageRecycleAdapter.OnItemClickListener() {
+                @Override
+                public void onItemClick(View itemView, int position) {
+                    Image image = imageRecycleAdapter.getItem(position);
+                    Intent intent = new Intent(getActivity(), ImageActivity.class);
+                    intent.putExtra(Image.class.getSimpleName(), image);
+                    startActivity(intent);
                 }
-            }
-
-        } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
-            e.printStackTrace();
+            });
+            recyclerView.setAdapter(imageRecycleAdapter);
+            recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
+            recyclerView.addItemDecoration(new SpacesItemDecoration(8, 16));
         }
-        return images;
-    }
 
-    class AsyncRequestHref extends AsyncTask<String, Void, List<Image>> {
         @Override
         protected List<Image> doInBackground(String... paths) {
-            return getListImageFromYandexDisk(restClient, paths[0]);
-        }
-    }
-
-    class AsyncDownloadImage extends AsyncTask<Image, Void, Image> {
-        @Override
-        protected Image doInBackground(Image... images) {
+            Resource resources;
             try {
-                images[0].setHref(restClient.getDownloadLink(images[0].getPath()).getHref());
-            } catch (NetworkIOException e) {
-                e.printStackTrace();
-            } catch (ServerIOException e) {
+                long start = SystemClock.currentThreadTimeMillis();
+
+                resources = REST_CLIENT.getResources(new ResourcesArgs.Builder()
+                        .setPath(paths[0])
+                        .setLimit(Integer.MAX_VALUE)
+                        .setPreviewSize("M")
+                        .build());
+                long end1 = SystemClock.currentThreadTimeMillis();
+                Log.d(TAG, "TIME FOR FORMMED RES = " + (end1 - start));
+                List<Resource> items = resources.getResourceList().getItems();
+                long end = SystemClock.currentThreadTimeMillis();
+                Log.d(TAG, "TIMEEEEEEEEE GET RESOURCES LIST = " + (end - start));
+                for (int i = 0; i < items.size(); i++) {
+                    String itemName = items.get(i).getName();
+                    long end2 = SystemClock.currentThreadTimeMillis();
+                    Log.d(TAG, "TIME 2 = " + (end2 - start));
+                    if (itemName.contains(".jpg")) {
+                        imagesList.add(new Image(itemName, items.get(i).getPreview(), "",
+                                paths[0] + "/" + itemName));
+                        publishProgress(imagesList.get(i));
+                        Log.d(TAG, "PUBLISH WITH = " + i);
+                    }
+                    long end3 = SystemClock.currentThreadTimeMillis();
+                    Log.d(TAG, "TIME 3 = " + (end3 - start));
+                }
+            } catch (Exception e) {
+                Log.e(TAG, e.getMessage());
                 e.printStackTrace();
             }
-            return images[0];
+            return imagesList;
+        }
+
+        @Override
+        protected void onProgressUpdate(Image... images) {
+            imageRecycleAdapter.notifyDataSetChanged();
+            Log.d(TAG, "DOWNLOAD IMAGE WITH LIST SIZE = " + imagesList.size());
         }
     }
 
