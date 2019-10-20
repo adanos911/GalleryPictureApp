@@ -25,7 +25,7 @@ public class ContentImageFragment extends Fragment implements AsyncLoadImgTask.O
     private static final String TAG = "ContentImageFragment";
 
     RecyclerView recyclerView;
-    public static int pageNumber;
+    private static int pageNumber;
     private static int offset = 0;
     protected Handler handler;
     StaggeredGridLayoutManager layoutManager;
@@ -45,6 +45,9 @@ public class ContentImageFragment extends Fragment implements AsyncLoadImgTask.O
         layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
+//        recyclerView.setItemViewCacheSize(20);
+//        recyclerView.setDrawingCacheEnabled(true);
+//        recyclerView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
 //        layoutManager.setMeasurementCacheEnabled(true);
         imageRecycleAdapter = new ImageRecycleAdapter(imagesList, recyclerView);
         imageRecycleAdapter.setOnItemClickListener(new ImageRecycleAdapter.OnItemClickListener() {
@@ -58,7 +61,7 @@ public class ContentImageFragment extends Fragment implements AsyncLoadImgTask.O
         });
         recyclerView.setAdapter(imageRecycleAdapter);
         recyclerView.addItemDecoration(new SpacesItemDecoration(4, 16));
-        getLoadImg();
+        getLoadImg(true);
         imageRecycleAdapter.setOnLoadMoreListener(new ImageRecycleAdapter.OnLoadMoreListener() {
             @Override
             public void onLoadMore() {
@@ -70,15 +73,15 @@ public class ContentImageFragment extends Fragment implements AsyncLoadImgTask.O
                     }
                 });
                 ++pageNumber;
-                getLoadImg();
+                getLoadImg(false);
             }
         });
         return view;
     }
 
-    public void getLoadImg() {
-        offset += 8;
-        AsyncLoadImgTask asyncLoadImgTask = new AsyncLoadImgTask(getActivity(), this, pageNumber, offset);
+    private void getLoadImg(boolean first) {
+        offset += (first ? 8 : 16);
+        AsyncLoadImgTask asyncLoadImgTask = new AsyncLoadImgTask(getActivity(), this, offset);
         asyncLoadImgTask.execute();
     }
 

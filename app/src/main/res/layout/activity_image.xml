@@ -3,7 +3,12 @@
     android:id="@+id/activity_image"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
+    android:background="@android:color/black"
     android:orientation="vertical">
+
+    <include
+        android:id="@+id/onImageToolbar"
+        layout="@layout/main_toolbar" />
 
     <LinearLayout
         android:id="@+id/linlaDownloadProgress"
@@ -17,17 +22,21 @@
             android:id="@+id/pbHeaderProgress"
             style="@style/Widget.AppCompat.ProgressBar"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"></ProgressBar>
+            android:layout_height="wrap_content" />
     </LinearLayout>
 
     <ImageView
         android:id="@+id/fullScreenImage"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_weight="0.9"
+        android:adjustViewBounds="true" />
 
     <TextView
         android:id="@+id/descriptionImage"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_weight="0"
         android:layout_height="wrap_content"
         android:textSize="20sp"/>
 

@@ -23,7 +23,6 @@ public class MainActivity extends AppCompatActivity {
     public static final String DISK_API_URL = "https://cloud-api.yandex.net";
     private static final String TAG = "MainActivity";
 
-
     //Authorization: OAuth
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,8 +41,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-//        int id = item.getItemId();
-
         return super.onOptionsItemSelected(item);
     }
 }

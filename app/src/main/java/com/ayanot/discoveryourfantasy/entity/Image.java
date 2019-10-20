@@ -3,6 +3,8 @@ package com.ayanot.discoveryourfantasy.entity;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.annotation.NonNull;
+
 public class Image implements Parcelable {
     private String name;
     public static final Creator<Image> CREATOR = new Creator<Image>() {
@@ -77,5 +79,14 @@ public class Image implements Parcelable {
 
     public void setPath(String path) {
         this.path = path;
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return "name = " + name + "\n"
+                + "preview = " + preview + "\n"
+                + "href = " + href + "\n"
+                + "path = " + path;
     }
 }

@@ -58,4 +58,13 @@ public class Downloader {
         Resource resource = resourceList.getItems().get(0);
         return new Image(resource.getName(), resource.getPreview(), "", resource.getPath().getPath());
     }
+
+    public static String getPreviewCustomSize(String path, String size) throws IOException, ServerIOException {
+        Resource resource = REST_CLIENT.getResources(new ResourcesArgs.Builder()
+                .setPath(path)
+                .setFields("preview")
+                .setPreviewSize(size)
+                .build());
+        return resource.getPreview();
+    }
 }

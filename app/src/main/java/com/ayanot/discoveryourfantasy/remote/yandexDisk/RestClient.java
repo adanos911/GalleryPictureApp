@@ -37,9 +37,7 @@ public class RestClient extends com.yandex.disk.rest.RestClient {
             cloudApiField.setAccessible(true);
             this.cloudApi = (CloudApi) cloudApiField.get(this);
             cloudApiField.setAccessible(false);
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
+        } catch (NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
         }
     }
