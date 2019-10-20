@@ -2,9 +2,15 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/main_activity"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@android:color/background_dark">
+
+    <include
+        android:id="@+id/mainToolbar"
+        layout="@layout/main_toolbar" />
 
     <fragment
+        android:layout_below="@id/mainToolbar"
         android:id="@+id/contentImageFragment"
         android:name="com.ayanot.discoveryourfantasy.ContentImageFragment"
         android:layout_width="match_parent"

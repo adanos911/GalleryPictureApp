@@ -3,7 +3,6 @@ package com.ayanot.discoveryourfantasy.entity.adapter;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,9 +49,6 @@ public class ImageRecycleAdapter extends RecyclerView.Adapter {
                             super.onScrolled(recyclerView, dx, dy);
                             totalItemCount = staggeredGridLayoutManager.getItemCount();
                             lastVisibleItem = staggeredGridLayoutManager.findLastVisibleItemPositions(null);
-                            Log.d("TEST", "ON LOAD MORE OBJECT TOTAL = " + totalItemCount + " lastVisibleItem = "
-                                    + lastVisibleItem.length + " : " + lastVisibleItem[0] + ", " + lastVisibleItem[1] +
-                                    "  . WITH LOAD PARAM = " + loading);
                             if (!loading && (totalItemCount <= (lastVisibleItem[0] + visibleThreshold))) {
                                 if (onLoadMoreListener != null) {
                                     onLoadMoreListener.onLoadMore();
@@ -128,9 +124,7 @@ public class ImageRecycleAdapter extends RecyclerView.Adapter {
             ((ImgLoadViewHolder) holder).imageView.setTag(target);
             picasso.load(image.getPreview())
                     .into(target);
-            Log.d("TEST", "NARISOVAL");
         } else {
-            Log.d("TEST", "IN PROGRESS BAR");
             ((ProgressViewHolder) holder).progressBar.setIndeterminate(true);
         }
     }

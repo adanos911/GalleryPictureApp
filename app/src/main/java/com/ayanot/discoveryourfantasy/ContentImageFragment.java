@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +17,7 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import com.ayanot.discoveryourfantasy.entity.Image;
 import com.ayanot.discoveryourfantasy.entity.adapter.ImageRecycleAdapter;
 import com.ayanot.discoveryourfantasy.entity.adapter.SpacesItemDecoration;
+import com.ayanot.discoveryourfantasy.remote.yandexDisk.AsyncLoadImgTask;
 import com.ayanot.discoveryourfantasy.remote.yandexDisk.Downloader;
 import com.yandex.disk.rest.exceptions.ServerIOException;
 
@@ -66,16 +66,17 @@ public class ContentImageFragment extends Fragment implements AsyncLoadImgTask.O
         imageRecycleAdapter.setOnLoadMoreListener(new ImageRecycleAdapter.OnLoadMoreListener() {
             @Override
             public void onLoadMore() {
-                Log.d("TEST", "IN LAOD MORE");
                 imagesList.add(null);
-                imageRecycleAdapter.notifyItemInserted(imagesList.size() - 1);
+                recyclerView.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        imageRecycleAdapter.notifyItemInserted(imagesList.size() - 1);
+                    }
+                });
                 ++pageNumber;
                 getLoadImg(false);
             }
         });
-//        Log.d("TEST", "AFTER LOAD MORE");
-//        for (int i =0; i < 100; i++)
-//            getLoadImg();
         return view;
     }
 
@@ -100,11 +101,7 @@ public class ContentImageFragment extends Fragment implements AsyncLoadImgTask.O
                 }
             });
         }
-        Log.d("TEST", "COMPLETTED + PAGE = " + pageNumber);
         imageRecycleAdapter.setLoaded();
-        Log.d("TEST", "PARAM LOAD IN END COMPLETED = " + imageRecycleAdapter.isLoading() +
-                "  SIZE LIST = " + imagesList.size());
-
     }
 
 //    @Override

@@ -1,11 +1,10 @@
-package com.ayanot.discoveryourfantasy;
+package com.ayanot.discoveryourfantasy.remote.yandexDisk;
 
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 
 import com.ayanot.discoveryourfantasy.entity.Image;
-import com.ayanot.discoveryourfantasy.remote.yandexDisk.Downloader;
 import com.yandex.disk.rest.exceptions.ServerIOException;
 
 import java.io.IOException;
@@ -13,7 +12,7 @@ import java.util.List;
 
 public class AsyncLoadImgTask extends AsyncTask<Object, Void, List<Image>> {
 
-    public OnTaskCompleted listener = null;
+    public OnTaskCompleted listener;
     Context context;
     int pageNumber;
     boolean first;
@@ -35,29 +34,17 @@ public class AsyncLoadImgTask extends AsyncTask<Object, Void, List<Image>> {
 
     @Override
     protected List<Image> doInBackground(Object... objects) {
-        if (first) {
-            synchronized (this) {
-                try {
-                    return Downloader.getImages("/", offset, 8);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    return null;
-                } catch (ServerIOException e) {
-                    e.printStackTrace();
-                    return null;
-                }
-            }
-        } else {
-            synchronized (this) {
-                try {
-                    return Downloader.getImages("/", offset, Integer.MAX_VALUE);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    return null;
-                } catch (ServerIOException e) {
-                    e.printStackTrace();
-                    return null;
-                }
+        int limit;
+        limit = first ? 6 : Integer.MAX_VALUE;
+        synchronized (this) {
+            try {
+                return Downloader.getImages("/", offset, limit);
+            } catch (IOException e) {
+                e.printStackTrace();
+                return null;
+            } catch (ServerIOException e) {
+                e.printStackTrace();
+                return null;
             }
         }
     }
