@@ -49,7 +49,7 @@ public class ImageRecycleAdapter extends RecyclerView.Adapter {
                             super.onScrolled(recyclerView, dx, dy);
                             totalItemCount = staggeredGridLayoutManager.getItemCount();
                             lastVisibleItem = staggeredGridLayoutManager.findLastVisibleItemPositions(null);
-                            if (!loading && (totalItemCount <= (lastVisibleItem[0] + visibleThreshold))) {
+                            if (!loading && (totalItemCount <= (lastVisibleItem[1] + visibleThreshold))) {
                                 if (onLoadMoreListener != null) {
                                     onLoadMoreListener.onLoadMore();
                                 }

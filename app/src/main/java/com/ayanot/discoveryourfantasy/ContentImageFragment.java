@@ -1,7 +1,6 @@
 package com.ayanot.discoveryourfantasy;
 
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -18,10 +17,7 @@ import com.ayanot.discoveryourfantasy.entity.Image;
 import com.ayanot.discoveryourfantasy.entity.adapter.ImageRecycleAdapter;
 import com.ayanot.discoveryourfantasy.entity.adapter.SpacesItemDecoration;
 import com.ayanot.discoveryourfantasy.remote.yandexDisk.AsyncLoadImgTask;
-import com.ayanot.discoveryourfantasy.remote.yandexDisk.Downloader;
-import com.yandex.disk.rest.exceptions.ServerIOException;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,8 +57,8 @@ public class ContentImageFragment extends Fragment implements AsyncLoadImgTask.O
             }
         });
         recyclerView.setAdapter(imageRecycleAdapter);
-        recyclerView.addItemDecoration(new SpacesItemDecoration(8, 16));
-        getLoadImg(true);
+        recyclerView.addItemDecoration(new SpacesItemDecoration(4, 16));
+        getLoadImg();
         imageRecycleAdapter.setOnLoadMoreListener(new ImageRecycleAdapter.OnLoadMoreListener() {
             @Override
             public void onLoadMore() {
@@ -74,15 +70,15 @@ public class ContentImageFragment extends Fragment implements AsyncLoadImgTask.O
                     }
                 });
                 ++pageNumber;
-                getLoadImg(false);
+                getLoadImg();
             }
         });
         return view;
     }
 
-    public void getLoadImg(boolean first) {
-        offset++;
-        AsyncLoadImgTask asyncLoadImgTask = new AsyncLoadImgTask(getActivity(), this, pageNumber, offset, first);
+    public void getLoadImg() {
+        offset += 8;
+        AsyncLoadImgTask asyncLoadImgTask = new AsyncLoadImgTask(getActivity(), this, pageNumber, offset);
         asyncLoadImgTask.execute();
     }
 
@@ -103,45 +99,4 @@ public class ContentImageFragment extends Fragment implements AsyncLoadImgTask.O
         }
         imageRecycleAdapter.setLoaded();
     }
-
-//    @Override
-//    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-//        super.onViewCreated(view, savedInstanceState);
-//        try {
-//            new AsyncRequestHref(0).execute("/");
-//        } catch (Exception e) {
-//            Log.d(TAG, e.getMessage());
-//            e.printStackTrace();
-//        }
-//    }
-
-    class AsyncRequestHref extends AsyncTask<String, Image, List<Image>> {
-        private int offset;
-
-        AsyncRequestHref(int offset) {
-            this.offset = offset;
-        }
-
-        @Override
-        protected List<Image> doInBackground(String... paths) {
-            try {
-                List<Image> images = Downloader.getImages(paths[0], offset, 100);
-                imagesList.addAll(images);
-                for (Image image : images)
-                    publishProgress(image);
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (ServerIOException e) {
-                e.printStackTrace();
-            }
-            return imagesList;
-        }
-
-        @Override
-        protected void onProgressUpdate(Image... images) {
-            imageRecycleAdapter.notifyDataSetChanged();
-//            recyclerView.requestLayout();
-        }
-    }
-
 }
