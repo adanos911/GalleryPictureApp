@@ -10,11 +10,11 @@
     <!--        android:layout_width="wrap_content"-->
     <!--        android:layout_gravity="center" />-->
 
-    <com.etsy.android.grid.util.DynamicHeightImageView
-        android:id="@+id/dynamicImage"
+    <ImageView
+        android:id="@+id/imageView"
         android:layout_width="match_parent"
-        android:adjustViewBounds="true"
         android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
         android:scaleType="centerCrop" />
 
 </androidx.cardview.widget.CardView>

@@ -3,44 +3,89 @@ package com.ayanot.discoveryourfantasy.entity.adapter;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.ayanot.discoveryourfantasy.R;
 import com.ayanot.discoveryourfantasy.entity.Image;
 import com.ayanot.discoveryourfantasy.picasso.PicassoFactory;
-import com.etsy.android.grid.util.DynamicHeightImageView;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
 import java.util.List;
 
-public class ImageRecycleAdapter extends RecyclerView.Adapter<ImageRecycleAdapter.ViewHolder> {
+public class ImageRecycleAdapter extends RecyclerView.Adapter {
+    private final int VIEW_ITEM = 1;
+    private final int VIEW_PROG = 0;
+
+    private int visibleThreshold = 5;
+    private int[] lastVisibleItem;
+    private int totalItemCount;
+    private boolean loading;
+    private OnLoadMoreListener onLoadMoreListener;
 
     private List<Image> images;
     private OnItemClickListener listener;
     private Context context;
-    private final int limit = 20;
     private Picasso picasso;
 
-    public ImageRecycleAdapter(List<Image> images) {
+    public ImageRecycleAdapter(final List<Image> images, RecyclerView recyclerView) {
         this.images = images;
-        setHasStableIds(true);
+        if (recyclerView.getLayoutManager() instanceof StaggeredGridLayoutManager) {
+            final StaggeredGridLayoutManager staggeredGridLayoutManager = (StaggeredGridLayoutManager)
+                    recyclerView.getLayoutManager();
+
+            recyclerView
+                    .addOnScrollListener(new RecyclerView.OnScrollListener() {
+                        @Override
+                        public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                            super.onScrolled(recyclerView, dx, dy);
+                            totalItemCount = staggeredGridLayoutManager.getItemCount();
+                            lastVisibleItem = staggeredGridLayoutManager.findLastVisibleItemPositions(null);
+                            Log.d("TEST", "ON LOAD MORE OBJECT TOTAL = " + totalItemCount + " lastVisibleItem = "
+                                    + lastVisibleItem.length + " : " + lastVisibleItem[0] + ", " + lastVisibleItem[1] +
+                                    "  . WITH LOAD PARAM = " + loading);
+                            if (!loading && (totalItemCount <= (lastVisibleItem[0] + visibleThreshold))) {
+                                if (onLoadMoreListener != null) {
+                                    onLoadMoreListener.onLoadMore();
+                                }
+                                loading = true;
+                            }
+                        }
+                    });
+        }
+    }
+
+    public boolean isLoading() {
+        return loading;
     }
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         context = parent.getContext();
-        LayoutInflater inflater = LayoutInflater.from(context);
-        View view = inflater.inflate(R.layout.item_image, parent, false);
         picasso = PicassoFactory.getInstance(context);
+        LayoutInflater inflater = LayoutInflater.from(context);
 
-        return new ViewHolder(view);
+        RecyclerView.ViewHolder viewHolder;
+
+        if (viewType == VIEW_ITEM) {
+            View view = inflater.inflate(R.layout.item_image, parent, false);
+            viewHolder = new ImgLoadViewHolder(view);
+        } else {
+            View view = inflater.inflate(R.layout.progress_item, parent, false);
+            viewHolder = new ProgressViewHolder(view);
+        }
+
+        return viewHolder;
     }
 
     public Image getItem(int position) {
@@ -54,7 +99,7 @@ public class ImageRecycleAdapter extends RecyclerView.Adapter<ImageRecycleAdapte
 
     @Override
     public int getItemViewType(int position) {
-        return position;
+        return images.get(position) != null ? VIEW_ITEM : VIEW_PROG;
     }
 
     @Override
@@ -63,13 +108,39 @@ public class ImageRecycleAdapter extends RecyclerView.Adapter<ImageRecycleAdapte
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Image image = images.get(position);
-//        ImageView imageView = holder.imageView;
-//        getImageLoader(context).load(image.getPreview())
-//                .into(imageView);
-        picasso.load(image.getPreview())
-                .into(holder.dynamicHeightImageView);
+    public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, int position) {
+        if (holder instanceof ImgLoadViewHolder) {
+            Image image = images.get(position);
+            Target target = new Target() {
+                @Override
+                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                    ((ImgLoadViewHolder) holder).imageView.setImageBitmap(bitmap);
+                }
+
+                @Override
+                public void onBitmapFailed(Drawable errorDrawable) {
+                }
+
+                @Override
+                public void onPrepareLoad(Drawable placeHolderDrawable) {
+                }
+            };
+            ((ImgLoadViewHolder) holder).imageView.setTag(target);
+            picasso.load(image.getPreview())
+                    .into(target);
+            Log.d("TEST", "NARISOVAL");
+        } else {
+            Log.d("TEST", "IN PROGRESS BAR");
+            ((ProgressViewHolder) holder).progressBar.setIndeterminate(true);
+        }
+    }
+
+    public void setLoaded() {
+        this.loading = false;
+    }
+
+    public void setOnLoadMoreListener(OnLoadMoreListener onLoadMoreListener) {
+        this.onLoadMoreListener = onLoadMoreListener;
     }
 
     public void setOnItemClickListener(OnItemClickListener listener) {
@@ -80,15 +151,17 @@ public class ImageRecycleAdapter extends RecyclerView.Adapter<ImageRecycleAdapte
         void onItemClick(View itemView, int position);
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder implements Target {
-        //        ImageView imageView;
-        DynamicHeightImageView dynamicHeightImageView;
+    public interface OnLoadMoreListener {
+        void onLoadMore();
+    }
 
-        ViewHolder(final View itemView) {
+    class ImgLoadViewHolder extends RecyclerView.ViewHolder {
+        ImageView imageView;
+
+        ImgLoadViewHolder(final View itemView) {
             super(itemView);
-//            imageView = itemView.findViewById(R.id.imageItem);
-            dynamicHeightImageView = itemView.findViewById(R.id.dynamicImage);
-            dynamicHeightImageView.setOnClickListener(new View.OnClickListener() {
+            imageView = itemView.findViewById(R.id.imageView);
+            imageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (listener != null) {
@@ -99,22 +172,14 @@ public class ImageRecycleAdapter extends RecyclerView.Adapter<ImageRecycleAdapte
                 }
             });
         }
+    }
 
-        @Override
-        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-            float ratio = (float) bitmap.getHeight() / (float) bitmap.getWidth();
-            dynamicHeightImageView.setHeightRatio(ratio);
-            dynamicHeightImageView.setImageBitmap(bitmap);
-        }
+    class ProgressViewHolder extends RecyclerView.ViewHolder {
+        public ProgressBar progressBar;
 
-        @Override
-        public void onBitmapFailed(Drawable errorDrawable) {
-
-        }
-
-        @Override
-        public void onPrepareLoad(Drawable placeHolderDrawable) {
-
+        public ProgressViewHolder(@NonNull View itemView) {
+            super(itemView);
+            progressBar = itemView.findViewById(R.id.progressBar1);
         }
     }
 }
