@@ -5,9 +5,10 @@
     tools:context=".ImageActivity">
 
     <item
-        android:id="@+id/downloadButton"
+        android:id="@+id/saveButton"
         android:orderInCategory="1"
-        android:title="Download"
-        app:showAsAction="ifRoom" />
+        android:title="Save"
+        app:actionLayout="@layout/save_button"
+        app:showAsAction="always" />
 
 </menu>

@@ -1,6 +1,5 @@
 package com.ayanot.discoveryourfantasy.remote.yandexDisk;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.os.AsyncTask;
@@ -17,13 +16,14 @@ public class AsyncLoadImgTask extends AsyncTask<Object, Void, List<Image>> {
 
     private OnTaskCompleted listener;
     private Context context;
-    private ProgressDialog progressDialog;
     private int offset;
+    private boolean first;
 
-    public AsyncLoadImgTask(Context context, OnTaskCompleted onTaskCompleted, int offset) {
+    public AsyncLoadImgTask(Context context, OnTaskCompleted onTaskCompleted, int offset, boolean first) {
         this.context = context;
         this.listener = onTaskCompleted;
         this.offset = offset;
+        this.first = first;
     }
 
     @Override
@@ -38,9 +38,10 @@ public class AsyncLoadImgTask extends AsyncTask<Object, Void, List<Image>> {
 
     @Override
     protected List<Image> doInBackground(Object... objects) {
+        int limit = first ? 8 : 16;
         synchronized (this) {
             try {
-                return Downloader.getImages("/", offset, 8);
+                return Downloader.getImages("/", offset, limit);
             } catch (IOException | ServerIOException e) {
                 Log.e(TAG, e.getMessage());
                 e.printStackTrace();

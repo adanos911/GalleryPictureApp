@@ -80,8 +80,8 @@ public class ContentImageFragment extends Fragment implements AsyncLoadImgTask.O
     }
 
     private void getLoadImg(boolean first) {
+        AsyncLoadImgTask asyncLoadImgTask = new AsyncLoadImgTask(getActivity(), this, offset, first);
         offset += (first ? 8 : 16);
-        AsyncLoadImgTask asyncLoadImgTask = new AsyncLoadImgTask(getActivity(), this, offset);
         asyncLoadImgTask.execute();
     }
 

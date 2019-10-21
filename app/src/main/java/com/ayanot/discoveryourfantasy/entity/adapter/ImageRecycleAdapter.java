@@ -122,8 +122,7 @@ public class ImageRecycleAdapter extends RecyclerView.Adapter {
                 }
             };
             ((ImgLoadViewHolder) holder).imageView.setTag(target);
-            picasso.load(image.getPreview())
-                    .into(target);
+            picasso.load(image.getPreview()).into(target);
         } else {
             ((ProgressViewHolder) holder).progressBar.setIndeterminate(true);
         }
@@ -150,7 +149,7 @@ public class ImageRecycleAdapter extends RecyclerView.Adapter {
     }
 
     class ImgLoadViewHolder extends RecyclerView.ViewHolder {
-        ImageView imageView;
+        final ImageView imageView;
 
         ImgLoadViewHolder(final View itemView) {
             super(itemView);
@@ -169,9 +168,9 @@ public class ImageRecycleAdapter extends RecyclerView.Adapter {
     }
 
     class ProgressViewHolder extends RecyclerView.ViewHolder {
-        public ProgressBar progressBar;
+        final ProgressBar progressBar;
 
-        public ProgressViewHolder(@NonNull View itemView) {
+        ProgressViewHolder(@NonNull View itemView) {
             super(itemView);
             progressBar = itemView.findViewById(R.id.progressBar1);
         }

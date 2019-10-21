@@ -16,7 +16,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
@@ -52,6 +51,7 @@ public class ImageActivity extends AppCompatActivity {
         toolbar = findViewById(R.id.onImageToolbar);
 
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
@@ -63,6 +63,20 @@ public class ImageActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_one_image, menu);
+        for (int i = 0; i < menu.size(); i++) {
+            MenuItem item = menu.getItem(i);
+            if (item.getItemId() == R.id.saveButton) {
+                View itemChoose = item.getActionView();
+                if (itemChoose != null) {
+                    itemChoose.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            new DownloadToStoreTask().execute();
+                        }
+                    });
+                }
+            }
+        }
         return true;
     }
 
@@ -70,14 +84,6 @@ public class ImageActivity extends AppCompatActivity {
     public boolean onSupportNavigateUp() {
         onBackPressed();
         return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.downloadButton) {
-            new DownloadToStoreTask().execute();
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     class DownloadToStoreTask extends AsyncTask<Void, Void, Void> {
