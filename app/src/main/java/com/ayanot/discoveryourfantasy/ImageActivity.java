@@ -116,7 +116,12 @@ public class ImageActivity extends AppCompatActivity {
     }
 
     class AsyncDownloadImage extends AsyncTask<Image, Void, String> {
-        LinearLayout linlaDownloadProgress = findViewById(R.id.linlaDownloadProgress);
+        LinearLayout linLaDownloadProgress = findViewById(R.id.linLaDownloadProgress);
+
+        @Override
+        protected void onPreExecute() {
+            linLaDownloadProgress.setVisibility(View.VISIBLE);
+        }
 
         @Override
         protected String doInBackground(Image... images) {
@@ -133,7 +138,7 @@ public class ImageActivity extends AppCompatActivity {
             Target target = new Target() {
                 @Override
                 public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                    linlaDownloadProgress.setVisibility(View.GONE);
+                    linLaDownloadProgress.setVisibility(View.GONE);
                     imageView.setImageBitmap(bitmap);
                 }
 
@@ -144,7 +149,6 @@ public class ImageActivity extends AppCompatActivity {
 
                 @Override
                 public void onPrepareLoad(Drawable placeHolderDrawable) {
-                    linlaDownloadProgress.setVisibility(View.VISIBLE);
                 }
             };
             imageView.setTag(target);

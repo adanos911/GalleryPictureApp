@@ -26,7 +26,7 @@ public class ContentImageFragment extends Fragment implements AsyncLoadImgTask.O
 
     RecyclerView recyclerView;
     private static int pageNumber;
-    private static int offset = 0;
+    private static int offset;
     protected Handler handler;
     StaggeredGridLayoutManager layoutManager;
     private List<Image> imagesList;
@@ -37,7 +37,14 @@ public class ContentImageFragment extends Fragment implements AsyncLoadImgTask.O
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.content_image_fragment, container, false);
+        setParameters(view);
+
+        return view;
+    }
+
+    private void setParameters(View view) {
         imagesList = new ArrayList<>();
+        offset = 0;
         pageNumber = 1;
         handler = new Handler();
         recyclerView = view.findViewById(R.id.recycleView);
@@ -76,13 +83,12 @@ public class ContentImageFragment extends Fragment implements AsyncLoadImgTask.O
                 getLoadImg(false);
             }
         });
-        return view;
     }
 
     private void getLoadImg(boolean first) {
         AsyncLoadImgTask asyncLoadImgTask = new AsyncLoadImgTask(getActivity(), this, offset, first);
         offset += (first ? 8 : 16);
-        asyncLoadImgTask.execute();
+        asyncLoadImgTask.execute("/");
     }
 
     @Override

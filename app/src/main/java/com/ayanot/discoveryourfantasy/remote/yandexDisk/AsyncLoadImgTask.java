@@ -11,7 +11,7 @@ import com.yandex.disk.rest.exceptions.ServerIOException;
 import java.io.IOException;
 import java.util.List;
 
-public class AsyncLoadImgTask extends AsyncTask<Object, Void, List<Image>> {
+public class AsyncLoadImgTask extends AsyncTask<String, Void, List<Image>> {
     private static final String TAG = "AsyncLoadImgTask";
 
     private OnTaskCompleted listener;
@@ -37,11 +37,11 @@ public class AsyncLoadImgTask extends AsyncTask<Object, Void, List<Image>> {
     }
 
     @Override
-    protected List<Image> doInBackground(Object... objects) {
+    protected List<Image> doInBackground(String... strings) {
         int limit = first ? 8 : 16;
         synchronized (this) {
             try {
-                return Downloader.getImages("/", offset, limit);
+                return Downloader.getImages(strings[0], offset, limit);
             } catch (IOException | ServerIOException e) {
                 Log.e(TAG, e.getMessage());
                 e.printStackTrace();

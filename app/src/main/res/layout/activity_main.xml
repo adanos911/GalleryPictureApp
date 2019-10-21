@@ -16,6 +16,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <TextView
+        android:id="@+id/textConnection"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:textSize="30sp" />
+
     <!--        <ImageView-->
     <!--            android:id="@+id/testImage"-->
     <!--            android:layout_width="match_parent"-->

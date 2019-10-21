@@ -11,7 +11,7 @@
         layout="@layout/main_toolbar" />
 
     <LinearLayout
-        android:id="@+id/linlaDownloadProgress"
+        android:id="@+id/linLaDownloadProgress"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:gravity="center"

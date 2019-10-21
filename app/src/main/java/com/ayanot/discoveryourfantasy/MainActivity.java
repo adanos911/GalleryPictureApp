@@ -1,8 +1,11 @@
 package com.ayanot.discoveryourfantasy;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -29,8 +32,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.mainToolbar);
+        TextView connectView = findViewById(R.id.textConnection);
         setSupportActionBar(toolbar);
 //        getSupportActionBar().setDisplayShowTitleEnabled(false);
+//        while (!isNetworkConnected())
+//            connectView.setText("Please check your Internet Connection");
     }
 
     @Override
@@ -42,5 +48,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         return super.onOptionsItemSelected(item);
+    }
+
+    private boolean isNetworkConnected() {
+        ConnectivityManager conMan = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        return conMan.getActiveNetworkInfo() != null && conMan.getActiveNetworkInfo().isConnected();
     }
 }

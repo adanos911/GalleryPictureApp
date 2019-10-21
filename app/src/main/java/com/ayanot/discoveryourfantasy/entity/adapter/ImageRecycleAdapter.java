@@ -25,7 +25,7 @@ public class ImageRecycleAdapter extends RecyclerView.Adapter {
     private final int VIEW_ITEM = 1;
     private final int VIEW_PROG = 0;
 
-    private int visibleThreshold = 5;
+    private int visibleThreshold = 10;
     private int[] lastVisibleItem;
     private int totalItemCount;
     private boolean loading;
@@ -167,7 +167,7 @@ public class ImageRecycleAdapter extends RecyclerView.Adapter {
         }
     }
 
-    class ProgressViewHolder extends RecyclerView.ViewHolder {
+    static class ProgressViewHolder extends RecyclerView.ViewHolder {
         final ProgressBar progressBar;
 
         ProgressViewHolder(@NonNull View itemView) {
