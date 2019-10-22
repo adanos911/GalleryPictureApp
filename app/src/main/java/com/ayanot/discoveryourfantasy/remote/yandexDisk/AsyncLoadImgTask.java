@@ -1,7 +1,5 @@
 package com.ayanot.discoveryourfantasy.remote.yandexDisk;
 
-import android.content.Context;
-import android.net.ConnectivityManager;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -15,12 +13,10 @@ public class AsyncLoadImgTask extends AsyncTask<String, Void, List<Image>> {
     private static final String TAG = "AsyncLoadImgTask";
 
     private OnTaskCompleted listener;
-    private Context context;
     private int offset;
     private boolean first;
 
-    public AsyncLoadImgTask(Context context, OnTaskCompleted onTaskCompleted, int offset, boolean first) {
-        this.context = context;
+    public AsyncLoadImgTask(OnTaskCompleted onTaskCompleted, int offset, boolean first) {
         this.listener = onTaskCompleted;
         this.offset = offset;
         this.first = first;
@@ -29,11 +25,6 @@ public class AsyncLoadImgTask extends AsyncTask<String, Void, List<Image>> {
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-//        while (!isNetworkConnected()) {
-//            Toast.makeText(context, "Please check your Internet Connection", Toast.LENGTH_LONG)
-//                    .show();
-//            SystemClock.sleep(1000);
-//        }
     }
 
     @Override
@@ -54,16 +45,9 @@ public class AsyncLoadImgTask extends AsyncTask<String, Void, List<Image>> {
     protected void onPostExecute(List<Image> images) {
         super.onPostExecute(images);
         listener.onTaskCompleted(images);
-
     }
 
     public interface OnTaskCompleted {
         void onTaskCompleted(List<Image> responseImage);
     }
-
-    private boolean isNetworkConnected() {
-        ConnectivityManager conMan = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        return conMan.getActiveNetworkInfo() != null && conMan.getActiveNetworkInfo().isConnected();
-    }
-
 }

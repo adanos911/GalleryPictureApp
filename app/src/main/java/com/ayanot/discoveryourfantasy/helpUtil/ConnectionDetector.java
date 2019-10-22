@@ -5,7 +5,7 @@ import android.net.ConnectivityManager;
 
 public class ConnectionDetector {
 
-    Context context;
+    private Context context;
 
     public ConnectionDetector(Context context) {
         this.context = context;

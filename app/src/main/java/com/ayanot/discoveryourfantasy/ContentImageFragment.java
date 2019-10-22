@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -16,6 +17,7 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import com.ayanot.discoveryourfantasy.entity.Image;
 import com.ayanot.discoveryourfantasy.entity.adapter.ImageRecycleAdapter;
 import com.ayanot.discoveryourfantasy.entity.adapter.SpacesItemDecoration;
+import com.ayanot.discoveryourfantasy.helpUtil.ConnectionDetector;
 import com.ayanot.discoveryourfantasy.remote.yandexDisk.AsyncLoadImgTask;
 
 import java.util.ArrayList;
@@ -31,6 +33,7 @@ public class ContentImageFragment extends Fragment implements AsyncLoadImgTask.O
     StaggeredGridLayoutManager layoutManager;
     private List<Image> imagesList;
     private ImageRecycleAdapter imageRecycleAdapter;
+    private ConnectionDetector connectionDetector;
 
     @Nullable
     @Override
@@ -46,6 +49,7 @@ public class ContentImageFragment extends Fragment implements AsyncLoadImgTask.O
         imagesList = new ArrayList<>();
         offset = 0;
         pageNumber = 1;
+        connectionDetector = new ConnectionDetector(getActivity());
         handler = new Handler();
         recyclerView = view.findViewById(R.id.recycleView);
 
@@ -72,21 +76,26 @@ public class ContentImageFragment extends Fragment implements AsyncLoadImgTask.O
         imageRecycleAdapter.setOnLoadMoreListener(new ImageRecycleAdapter.OnLoadMoreListener() {
             @Override
             public void onLoadMore() {
-                imagesList.add(null);
-                recyclerView.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        imageRecycleAdapter.notifyItemInserted(imagesList.size() - 1);
-                    }
-                });
-                ++pageNumber;
-                getLoadImg(false);
+                if (connectionDetector.isNetworkConnected()) {
+                    imagesList.add(null);
+                    recyclerView.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            imageRecycleAdapter.notifyItemInserted(imagesList.size() - 1);
+                        }
+                    });
+                    ++pageNumber;
+                    getLoadImg(false);
+                } else {
+                    Toast.makeText(getActivity(), "Please check your internet connection", Toast.LENGTH_LONG)
+                            .show();
+                }
             }
         });
     }
 
     private void getLoadImg(boolean first) {
-        AsyncLoadImgTask asyncLoadImgTask = new AsyncLoadImgTask(getActivity(), this, offset, first);
+        AsyncLoadImgTask asyncLoadImgTask = new AsyncLoadImgTask(this, offset, first);
         offset += (first ? 8 : 16);
         asyncLoadImgTask.execute("/");
     }

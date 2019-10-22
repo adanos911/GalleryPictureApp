@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.ayanot.discoveryourfantasy.R;
 import com.ayanot.discoveryourfantasy.entity.Image;
+import com.ayanot.discoveryourfantasy.helpUtil.ConnectionDetector;
 import com.ayanot.discoveryourfantasy.picasso.PicassoFactory;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
@@ -30,6 +31,7 @@ public class ImageRecycleAdapter extends RecyclerView.Adapter {
     private int totalItemCount;
     private boolean loading;
     private OnLoadMoreListener onLoadMoreListener;
+    private ConnectionDetector connectionDetector;
 
     private List<Image> images;
     private OnItemClickListener listener;
@@ -55,6 +57,8 @@ public class ImageRecycleAdapter extends RecyclerView.Adapter {
                                 }
                                 loading = true;
                             }
+                            if (!connectionDetector.isNetworkConnected())
+                                loading = false;
                         }
                     });
         }
@@ -69,6 +73,7 @@ public class ImageRecycleAdapter extends RecyclerView.Adapter {
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         context = parent.getContext();
         picasso = PicassoFactory.getInstance(context);
+        connectionDetector = new ConnectionDetector(context);
         LayoutInflater inflater = LayoutInflater.from(context);
 
         RecyclerView.ViewHolder viewHolder;
