@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
+import com.ayanot.discoveryourfantasy.dataBase.DatabaseAdapter;
 import com.ayanot.discoveryourfantasy.entity.Image;
 import com.ayanot.discoveryourfantasy.entity.adapter.ImageRecycleAdapter;
 import com.ayanot.discoveryourfantasy.entity.adapter.SpacesItemDecoration;
@@ -34,12 +35,16 @@ public class ContentImageFragment extends Fragment implements AsyncLoadImgTask.O
     private List<Image> imagesList;
     private ImageRecycleAdapter imageRecycleAdapter;
     private ConnectionDetector connectionDetector;
+    private DatabaseAdapter databaseAdapter;
+    private List<Image> cacheImages;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.content_image_fragment, container, false);
+        if (getArguments() != null)
+            cacheImages = getArguments().getParcelableArrayList(Image.class.getSimpleName());
         setParameters(view);
 
         return view;
@@ -47,10 +52,13 @@ public class ContentImageFragment extends Fragment implements AsyncLoadImgTask.O
 
     private void setParameters(View view) {
         imagesList = new ArrayList<>();
+        if (cacheImages != null)
+            imagesList.addAll(cacheImages);
         offset = 0;
         pageNumber = 1;
         connectionDetector = new ConnectionDetector(getActivity());
         handler = new Handler();
+        databaseAdapter = new DatabaseAdapter(getActivity().getApplicationContext());
         recyclerView = view.findViewById(R.id.recycleView);
 
         layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
@@ -60,7 +68,7 @@ public class ContentImageFragment extends Fragment implements AsyncLoadImgTask.O
 //        recyclerView.setDrawingCacheEnabled(true);
 //        recyclerView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
 //        layoutManager.setMeasurementCacheEnabled(true);
-        imageRecycleAdapter = new ImageRecycleAdapter(imagesList, recyclerView);
+        imageRecycleAdapter = new ImageRecycleAdapter(imagesList, recyclerView, databaseAdapter);
         imageRecycleAdapter.setOnItemClickListener(new ImageRecycleAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View itemView, int position) {
@@ -72,7 +80,8 @@ public class ContentImageFragment extends Fragment implements AsyncLoadImgTask.O
         });
         recyclerView.setAdapter(imageRecycleAdapter);
         recyclerView.addItemDecoration(new SpacesItemDecoration(4, 16));
-        getLoadImg(true);
+        if (connectionDetector.isNetworkConnected())
+            getLoadImg(true);
         imageRecycleAdapter.setOnLoadMoreListener(new ImageRecycleAdapter.OnLoadMoreListener() {
             @Override
             public void onLoadMore() {
@@ -95,6 +104,11 @@ public class ContentImageFragment extends Fragment implements AsyncLoadImgTask.O
     }
 
     private void getLoadImg(boolean first) {
+        if (first) {
+            databaseAdapter.open();
+            databaseAdapter.refresh();
+            databaseAdapter.close();
+        }
         AsyncLoadImgTask asyncLoadImgTask = new AsyncLoadImgTask(this, offset, first);
         offset += (first ? 8 : 16);
         asyncLoadImgTask.execute("/");

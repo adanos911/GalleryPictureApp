@@ -3,6 +3,7 @@ package com.ayanot.discoveryourfantasy.entity.adapter;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.ayanot.discoveryourfantasy.R;
+import com.ayanot.discoveryourfantasy.dataBase.DatabaseAdapter;
 import com.ayanot.discoveryourfantasy.entity.Image;
 import com.ayanot.discoveryourfantasy.helpUtil.ConnectionDetector;
 import com.ayanot.discoveryourfantasy.picasso.PicassoFactory;
@@ -37,9 +39,11 @@ public class ImageRecycleAdapter extends RecyclerView.Adapter {
     private OnItemClickListener listener;
     private Context context;
     private Picasso picasso;
+    private DatabaseAdapter databaseAdapter;
 
-    public ImageRecycleAdapter(final List<Image> images, RecyclerView recyclerView) {
+    public ImageRecycleAdapter(final List<Image> images, RecyclerView recyclerView, DatabaseAdapter databaseAdapter) {
         this.images = images;
+        this.databaseAdapter = databaseAdapter;
         if (recyclerView.getLayoutManager() instanceof StaggeredGridLayoutManager) {
             final StaggeredGridLayoutManager staggeredGridLayoutManager = (StaggeredGridLayoutManager)
                     recyclerView.getLayoutManager();
@@ -109,13 +113,20 @@ public class ImageRecycleAdapter extends RecyclerView.Adapter {
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, final int position) {
         if (holder instanceof ImgLoadViewHolder) {
-            Image image = images.get(position);
+            final Image image = images.get(position);
             Target target = new Target() {
                 @Override
                 public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
                     ((ImgLoadViewHolder) holder).imageView.setImageBitmap(bitmap);
+                    image.setBitmap(bitmap);
+                    Log.d("ALOHA", "POSITION = " + position);
+                    if (position < 8) {
+                        databaseAdapter.open();
+                        image.setId(databaseAdapter.insert(image));
+                        databaseAdapter.close();
+                    }
                 }
 
                 @Override

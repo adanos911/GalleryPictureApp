@@ -1,6 +1,8 @@
 package com.ayanot.discoveryourfantasy;
 
 import android.os.Bundle;
+import android.os.Parcelable;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -12,10 +14,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
+import com.ayanot.discoveryourfantasy.dataBase.DatabaseAdapter;
+import com.ayanot.discoveryourfantasy.entity.Image;
 import com.ayanot.discoveryourfantasy.helpUtil.ConnectionDetector;
 import com.ayanot.discoveryourfantasy.remote.yandexDisk.Credentials;
 import com.ayanot.discoveryourfantasy.remote.yandexDisk.RestClient;
 import com.ayanot.discoveryourfantasy.remote.yandexDisk.RestClientFactory;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     public static final String CLIENT_ID = BuildConfig.CLIENT_ID;
@@ -41,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
         refreshButton = findViewById(R.id.refreshButton);
         refreshButton.setVisibility(View.GONE);
         connectionDetector = new ConnectionDetector(this);
+        Log.d("ALOHA", "START!!!");
 
         refreshButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -56,11 +64,21 @@ public class MainActivity extends AppCompatActivity {
         });
         if (connectionDetector.isNetworkConnected())
             addFragment(new ContentImageFragment());
-        else
-            refreshButton.setVisibility(View.VISIBLE);
-
+        else {
+//            refreshButton.setVisibility(View.VISIBLE);
+            DatabaseAdapter databaseAdapter = new DatabaseAdapter(this);
+            databaseAdapter.open();
+            List<Image> images = databaseAdapter.getImages();
+            databaseAdapter.close();
+            Bundle bundleCacheImg = new Bundle();
+            bundleCacheImg.putParcelableArrayList(Image.class.getSimpleName(), (ArrayList<? extends Parcelable>) images);
+//            for (int i = 0; i < images.size(); i++)
+//                bundleCacheImg.putParcelable(String.valueOf(i), images.get(i));
+            ContentImageFragment contentImageFragment = new ContentImageFragment();
+            contentImageFragment.setArguments(bundleCacheImg);
+            addFragment(contentImageFragment);
+        }
         setSupportActionBar(toolbar);
-//        getSupportActionBar().setDisplayShowTitleEnabled(false);
     }
 
     @Override
