@@ -9,27 +9,21 @@
         android:id="@+id/mainToolbar"
         layout="@layout/main_toolbar" />
 
-    <fragment
-        android:layout_below="@id/mainToolbar"
-        android:id="@+id/contentImageFragment"
-        android:name="com.ayanot.discoveryourfantasy.ContentImageFragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
-    <TextView
-        android:id="@+id/textConnection"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:textSize="30sp" />
-
-    <!--        <ImageView-->
-    <!--            android:id="@+id/testImage"-->
-    <!--            android:layout_width="match_parent"-->
-    <!--            android:layout_height="match_parent" />-->
-
-    <!--    <WebView-->
-    <!--        android:id="@+id/urlOAuth"-->
+    <!--    <fragment-->
+    <!--        android:layout_below="@id/mainToolbar"-->
+    <!--        android:id="@+id/contentImageFragment"-->
+    <!--        android:name="com.ayanot.discoveryourfantasy.ContentImageFragment"-->
     <!--        android:layout_width="match_parent"-->
     <!--        android:layout_height="match_parent" />-->
+
+    <Button
+        android:id="@+id/refreshButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:text="Refresh"
+        android:textColor="@android:color/holo_red_dark"
+        android:textSize="40sp" />
 
 </RelativeLayout>
