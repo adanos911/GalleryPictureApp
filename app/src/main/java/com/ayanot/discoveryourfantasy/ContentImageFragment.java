@@ -14,7 +14,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
-import com.ayanot.discoveryourfantasy.dataBase.DatabaseAdapter;
+import com.ayanot.discoveryourfantasy.dataBase.cache.DatabaseAdapter;
 import com.ayanot.discoveryourfantasy.entity.Image;
 import com.ayanot.discoveryourfantasy.entity.adapter.ImageRecycleAdapter;
 import com.ayanot.discoveryourfantasy.entity.adapter.SpacesItemDecoration;
@@ -27,11 +27,11 @@ import java.util.List;
 public class ContentImageFragment extends Fragment implements AsyncLoadImgTask.OnTaskCompleted {
     private static final String TAG = "ContentImageFragment";
 
-    RecyclerView recyclerView;
+    private RecyclerView recyclerView;
     private static int pageNumber;
     private static int offset;
-    protected Handler handler;
-    StaggeredGridLayoutManager layoutManager;
+    private Handler handler;
+    private StaggeredGridLayoutManager layoutManager;
     private List<Image> imagesList;
     private ImageRecycleAdapter imageRecycleAdapter;
     private ConnectionDetector connectionDetector;
@@ -43,11 +43,19 @@ public class ContentImageFragment extends Fragment implements AsyncLoadImgTask.O
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.content_image_fragment, container, false);
-        if (getArguments() != null)
-            cacheImages = getArguments().getParcelableArrayList(Image.class.getSimpleName());
+        if (getArguments() != null) {
+            cacheImages = getArguments().getParcelableArrayList(ArrayList.class.getSimpleName());
+        }
         setParameters(view);
 
         return view;
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+//        if (getArguments() != null)
+//            getArguments().remove(ArrayList.class.getSimpleName());
     }
 
     private void setParameters(View view) {
@@ -81,7 +89,7 @@ public class ContentImageFragment extends Fragment implements AsyncLoadImgTask.O
         recyclerView.setAdapter(imageRecycleAdapter);
         recyclerView.addItemDecoration(new SpacesItemDecoration(4, 16));
         if (connectionDetector.isNetworkConnected())
-            getLoadImg(true);
+            getLoadImg();
         imageRecycleAdapter.setOnLoadMoreListener(new ImageRecycleAdapter.OnLoadMoreListener() {
             @Override
             public void onLoadMore() {
@@ -94,23 +102,23 @@ public class ContentImageFragment extends Fragment implements AsyncLoadImgTask.O
                         }
                     });
                     ++pageNumber;
-                    getLoadImg(false);
+                    getLoadImg();
                 } else {
-                    Toast.makeText(getActivity(), "Please check your internet connection", Toast.LENGTH_LONG)
+                    Toast.makeText(getActivity(), "Please check your internet connection", Toast.LENGTH_SHORT)
                             .show();
                 }
             }
         });
     }
 
-    private void getLoadImg(boolean first) {
-        if (first) {
-            databaseAdapter.open();
+    private void getLoadImg() {
+        databaseAdapter.open();
+        if (pageNumber == 1 && databaseAdapter.getCount() > 8) {
             databaseAdapter.refresh();
             databaseAdapter.close();
         }
-        AsyncLoadImgTask asyncLoadImgTask = new AsyncLoadImgTask(this, offset, first);
-        offset += (first ? 8 : 16);
+        AsyncLoadImgTask asyncLoadImgTask = new AsyncLoadImgTask(this, offset, pageNumber);
+        offset += (pageNumber == 1 ? 8 : 16);
         asyncLoadImgTask.execute("/");
     }
 

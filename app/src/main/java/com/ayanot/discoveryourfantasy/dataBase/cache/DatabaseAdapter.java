@@ -1,4 +1,4 @@
-package com.ayanot.discoveryourfantasy.dataBase;
+package com.ayanot.discoveryourfantasy.dataBase.cache;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -6,7 +6,6 @@ import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 
 import com.ayanot.discoveryourfantasy.entity.Image;
 
@@ -17,24 +16,24 @@ import java.util.List;
 
 public class DatabaseAdapter {
 
-    private DatabaseHandler databaseHandler;
+    private DatabaseHelper databaseHelper;
     private SQLiteDatabase database;
 
     public DatabaseAdapter(Context context) {
-        databaseHandler = new DatabaseHandler(context.getApplicationContext());
+        databaseHelper = new DatabaseHelper(context.getApplicationContext());
     }
 
     public DatabaseAdapter open() {
-        database = databaseHandler.getWritableDatabase();
+        database = databaseHelper.getWritableDatabase();
         return this;
     }
 
     public void close() {
-        databaseHandler.close();
+        databaseHelper.close();
     }
 
     public void refresh() {
-        databaseHandler.onUpgrade(database, 1, 2);
+        databaseHelper.onUpgrade(database, 1, 2);
     }
 
     public List<Image> getImages() {
@@ -50,12 +49,12 @@ public class DatabaseAdapter {
     }
 
     public long getCount() {
-        return DatabaseUtils.queryNumEntries(database, DatabaseHandler.TABLE);
+        return DatabaseUtils.queryNumEntries(database, DatabaseHelper.TABLE);
     }
 
     public Image getImage(long id) {
         Image image = null;
-        String query = String.format("select * from %s where %s=?", DatabaseHandler.TABLE, DatabaseHandler.COLUMN_ID);
+        String query = String.format("select * from %s where %s=?", DatabaseHelper.TABLE, DatabaseHelper.COLUMN_ID);
         Cursor cursor = database.rawQuery(query, new String[]{String.valueOf(id)});
         if (cursor.moveToFirst()) {
             image = getImageIntoCursor(cursor);
@@ -65,46 +64,45 @@ public class DatabaseAdapter {
     }
 
     public long insert(Image image) {
-        return database.insert(DatabaseHandler.TABLE, null, getContentValues(image));
+        return database.insert(DatabaseHelper.TABLE, null, getContentValues(image));
     }
 
     public long delete(long id) {
         String whereClause = "_id = ?";
         String[] whereArgs = new String[]{String.valueOf(id)};
-        return database.delete(DatabaseHandler.TABLE, whereClause, whereArgs);
+        return database.delete(DatabaseHelper.TABLE, whereClause, whereArgs);
     }
 
     public long update(Image image) {
-        String whereClause = DatabaseHandler.COLUMN_ID + "=" + String.valueOf(image.getId());
-        return database.update(DatabaseHandler.TABLE, getContentValues(image), whereClause, null);
+        String whereClause = DatabaseHelper.COLUMN_ID + "=" + String.valueOf(image.getId());
+        return database.update(DatabaseHelper.TABLE, getContentValues(image), whereClause, null);
     }
 
     private Cursor getAllEntries() {
-        String[] columns = new String[]{DatabaseHandler.COLUMN_ID, DatabaseHandler.COLUMN_NAME,
-                DatabaseHandler.COLUMN_PREVIEW, DatabaseHandler.COLUMN_HREF, DatabaseHandler.COLUMN_PATH,
-                DatabaseHandler.COLUMN_IMAGE_BLOB};
-        return database.query(DatabaseHandler.TABLE, columns,
+        String[] columns = new String[]{DatabaseHelper.COLUMN_ID, DatabaseHelper.COLUMN_NAME,
+                DatabaseHelper.COLUMN_PREVIEW, DatabaseHelper.COLUMN_HREF, DatabaseHelper.COLUMN_PATH,
+                DatabaseHelper.COLUMN_IMAGE_BLOB};
+        return database.query(DatabaseHelper.TABLE, columns,
                 null, null, null, null, null);
     }
 
     private Image getImageIntoCursor(Cursor cursor) {
-        int id = cursor.getInt(cursor.getColumnIndex(DatabaseHandler.COLUMN_ID));
-        String name = cursor.getString(cursor.getColumnIndex(DatabaseHandler.COLUMN_NAME));
-        String preview = cursor.getString(cursor.getColumnIndex(DatabaseHandler.COLUMN_PREVIEW));
-        String href = cursor.getString(cursor.getColumnIndex(DatabaseHandler.COLUMN_HREF));
-        String path = cursor.getString(cursor.getColumnIndex(DatabaseHandler.COLUMN_PATH));
-        byte[] blob = cursor.getBlob(cursor.getColumnIndex(DatabaseHandler.COLUMN_IMAGE_BLOB));
-        return new Image(id, name, preview, href, path,
-                BitmapFactory.decodeByteArray(blob, 0, blob.length));
+        int id = cursor.getInt(cursor.getColumnIndex(DatabaseHelper.COLUMN_ID));
+        String name = cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_NAME));
+        String preview = cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_PREVIEW));
+        String href = cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_HREF));
+        String path = cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_PATH));
+        byte[] blob = cursor.getBlob(cursor.getColumnIndex(DatabaseHelper.COLUMN_IMAGE_BLOB));
+        return new Image(id, name, preview, href, path, blob);
     }
 
     private ContentValues getContentValues(Image image) {
         ContentValues cv = new ContentValues();
-        cv.put(DatabaseHandler.COLUMN_NAME, image.getName());
-        cv.put(DatabaseHandler.COLUMN_PREVIEW, image.getPreview());
-        cv.put(DatabaseHandler.COLUMN_HREF, image.getHref());
-        cv.put(DatabaseHandler.COLUMN_PATH, image.getPath());
-        cv.put(DatabaseHandler.COLUMN_IMAGE_BLOB, getBytesFromBitmap(image.getBitmap()));
+        cv.put(DatabaseHelper.COLUMN_NAME, image.getName());
+        cv.put(DatabaseHelper.COLUMN_PREVIEW, image.getPreview());
+        cv.put(DatabaseHelper.COLUMN_HREF, image.getHref());
+        cv.put(DatabaseHelper.COLUMN_PATH, image.getPath());
+        cv.put(DatabaseHelper.COLUMN_IMAGE_BLOB, image.getBitmap());
         return cv;
     }
 

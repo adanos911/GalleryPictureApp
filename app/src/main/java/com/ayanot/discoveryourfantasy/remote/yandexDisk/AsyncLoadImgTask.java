@@ -14,12 +14,12 @@ public class AsyncLoadImgTask extends AsyncTask<String, Void, List<Image>> {
 
     private OnTaskCompleted listener;
     private int offset;
-    private boolean first;
+    private int pageNumber;
 
-    public AsyncLoadImgTask(OnTaskCompleted onTaskCompleted, int offset, boolean first) {
+    public AsyncLoadImgTask(OnTaskCompleted onTaskCompleted, int offset, int pageNumber) {
         this.listener = onTaskCompleted;
         this.offset = offset;
-        this.first = first;
+        this.pageNumber = pageNumber;
     }
 
     @Override
@@ -29,7 +29,7 @@ public class AsyncLoadImgTask extends AsyncTask<String, Void, List<Image>> {
 
     @Override
     protected List<Image> doInBackground(String... strings) {
-        int limit = first ? 8 : 16;
+        int limit = (pageNumber == 1) ? 8 : 16;
         synchronized (this) {
             try {
                 return Downloader.getImages(strings[0], offset, limit);

@@ -1,6 +1,5 @@
 package com.ayanot.discoveryourfantasy.entity;
 
-import android.graphics.Bitmap;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -11,8 +10,8 @@ public class Image implements Parcelable {
     public static final Creator<Image> CREATOR = new Creator<Image>() {
         @Override
         public Image createFromParcel(Parcel source) {
-            return new Image(source.readInt(), source.readString(), source.readString(),
-                    source.readString(), source.readString(), Bitmap.CREATOR.createFromParcel(source));
+            return new Image(source.readLong(), source.readString(), source.readString(),
+                    source.readString(), source.readString(), source.createByteArray());
         }
 
         @Override
@@ -20,20 +19,13 @@ public class Image implements Parcelable {
             return new Image[size];
         }
     };
+    private long id;
     private String name;
     private String preview;
     private String href;
     private String path;
-    private long id;
-    private Bitmap bitmap;
+    private byte[] bitmap;
 
-    public Image(String name, String preview) {
-        this(name, preview, "", "");
-    }
-
-    public Image(String name, String preview, String href) {
-        this(name, preview, href, "");
-    }
 
     public Image(String name, String preview, String href, String path) {
         this.name = name;
@@ -42,7 +34,15 @@ public class Image implements Parcelable {
         this.path = path;
     }
 
-    public Image(long id, String name, String preview, String href, String path, Bitmap bitmap) {
+    public Image(long id, String name, String preview, String href, String path) {
+        this.id = id;
+        this.name = name;
+        this.preview = preview;
+        this.href = href;
+        this.path = path;
+    }
+
+    public Image(long id, String name, String preview, String href, String path, byte[] bitmap) {
         this.id = id;
         this.name = name;
         this.preview = preview;
@@ -58,12 +58,12 @@ public class Image implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeValue(id);
+        dest.writeLong(id);
         dest.writeString(name);
         dest.writeString(preview);
         dest.writeString(href);
         dest.writeString(path);
-        dest.writeValue(bitmap);
+        dest.writeByteArray(bitmap);
     }
 
     public long getId() {
@@ -73,36 +73,44 @@ public class Image implements Parcelable {
     public void setId(long id) {
         this.id = id;
     }
+
     public String getName() {
         return name;
     }
+
     public void setName(String name) {
         this.name = name;
     }
+
     public String getHref() {
         return href;
     }
+
     public void setHref(String href) {
         this.href = href;
     }
+
     public String getPreview() {
         return preview;
     }
+
     public void setPreview(String preview) {
         this.preview = preview;
     }
+
     public String getPath() {
         return path;
     }
+
     public void setPath(String path) {
         this.path = path;
     }
 
-    public Bitmap getBitmap() {
+    public byte[] getBitmap() {
         return bitmap;
     }
 
-    public void setBitmap(Bitmap bitmap) {
+    public void setBitmap(byte[] bitmap) {
         this.bitmap = bitmap;
     }
 
@@ -114,6 +122,6 @@ public class Image implements Parcelable {
                 + "preview = " + preview + "\n"
                 + "href = " + href + "\n"
                 + "path = " + path + "\n"
-                + "bitmap = " + bitmap.toString();
+                + "bitmap = " + bitmap;
     }
 }

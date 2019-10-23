@@ -1,4 +1,4 @@
-package com.ayanot.discoveryourfantasy.dataBase;
+package com.ayanot.discoveryourfantasy.dataBase.cache;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
@@ -6,10 +6,10 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import androidx.annotation.Nullable;
 
-public class DatabaseHandler extends SQLiteOpenHelper {
+public class DatabaseHelper extends SQLiteOpenHelper {
 
-    static final String DATABASE_NAME = "images";
-    static final int SCHEMA = 1;
+    private static final String DATABASE_NAME = "images";
+    private static final int SCHEMA = 1;
     static final String TABLE = "cache";
 
     static final String COLUMN_ID = "_id";
@@ -19,7 +19,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     static final String COLUMN_PATH = "path";
     static final String COLUMN_IMAGE_BLOB = "image";
 
-    DatabaseHandler(@Nullable Context context) {
+    DatabaseHelper(@Nullable Context context) {
         super(context, DATABASE_NAME, null, SCHEMA);
     }
 

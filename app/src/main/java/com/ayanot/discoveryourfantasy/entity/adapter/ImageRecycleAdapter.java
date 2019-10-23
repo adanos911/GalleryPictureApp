@@ -3,7 +3,6 @@ package com.ayanot.discoveryourfantasy.entity.adapter;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,8 +14,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.ayanot.discoveryourfantasy.R;
-import com.ayanot.discoveryourfantasy.dataBase.DatabaseAdapter;
+import com.ayanot.discoveryourfantasy.dataBase.cache.DatabaseAdapter;
 import com.ayanot.discoveryourfantasy.entity.Image;
+import com.ayanot.discoveryourfantasy.helpUtil.BitmapHelper;
 import com.ayanot.discoveryourfantasy.helpUtil.ConnectionDetector;
 import com.ayanot.discoveryourfantasy.picasso.PicassoFactory;
 import com.squareup.picasso.Picasso;
@@ -119,11 +119,10 @@ public class ImageRecycleAdapter extends RecyclerView.Adapter {
             Target target = new Target() {
                 @Override
                 public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                    image.setBitmap(BitmapHelper.getBytesArray(bitmap, Bitmap.CompressFormat.JPEG));
                     ((ImgLoadViewHolder) holder).imageView.setImageBitmap(bitmap);
-                    image.setBitmap(bitmap);
-                    Log.d("ALOHA", "POSITION = " + position);
-                    if (position < 8) {
-                        databaseAdapter.open();
+                    databaseAdapter.open();
+                    if (position < 8 && databaseAdapter.getCount() <= 8) {
                         image.setId(databaseAdapter.insert(image));
                         databaseAdapter.close();
                     }

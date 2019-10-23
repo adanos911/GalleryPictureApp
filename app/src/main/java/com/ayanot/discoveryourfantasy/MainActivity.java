@@ -2,19 +2,15 @@ package com.ayanot.discoveryourfantasy;
 
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
-import com.ayanot.discoveryourfantasy.dataBase.DatabaseAdapter;
+import com.ayanot.discoveryourfantasy.dataBase.cache.DatabaseAdapter;
 import com.ayanot.discoveryourfantasy.entity.Image;
 import com.ayanot.discoveryourfantasy.helpUtil.ConnectionDetector;
 import com.ayanot.discoveryourfantasy.remote.yandexDisk.Credentials;
@@ -35,45 +31,25 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
 
     Toolbar toolbar;
-    Button refreshButton;
     ConnectionDetector connectionDetector;
 
     //Authorization: OAuth
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_main);
         toolbar = findViewById(R.id.mainToolbar);
-        refreshButton = findViewById(R.id.refreshButton);
-        refreshButton.setVisibility(View.GONE);
         connectionDetector = new ConnectionDetector(this);
-        Log.d("ALOHA", "START!!!");
 
-        refreshButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (connectionDetector.isNetworkConnected()) {
-                    refreshButton.setVisibility(View.GONE);
-                    addFragment(new ContentImageFragment());
-                } else {
-                    Toast.makeText(MainActivity.this, "Please check your Internet Connection", Toast.LENGTH_SHORT)
-                            .show();
-                }
-            }
-        });
         if (connectionDetector.isNetworkConnected())
             addFragment(new ContentImageFragment());
         else {
-//            refreshButton.setVisibility(View.VISIBLE);
             DatabaseAdapter databaseAdapter = new DatabaseAdapter(this);
             databaseAdapter.open();
             List<Image> images = databaseAdapter.getImages();
             databaseAdapter.close();
             Bundle bundleCacheImg = new Bundle();
-            bundleCacheImg.putParcelableArrayList(Image.class.getSimpleName(), (ArrayList<? extends Parcelable>) images);
-//            for (int i = 0; i < images.size(); i++)
-//                bundleCacheImg.putParcelable(String.valueOf(i), images.get(i));
+            bundleCacheImg.putParcelableArrayList(ArrayList.class.getSimpleName(), (ArrayList<? extends Parcelable>) images);
             ContentImageFragment contentImageFragment = new ContentImageFragment();
             contentImageFragment.setArguments(bundleCacheImg);
             addFragment(contentImageFragment);

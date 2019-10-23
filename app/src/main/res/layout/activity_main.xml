@@ -16,14 +16,14 @@
     <!--        android:layout_width="match_parent"-->
     <!--        android:layout_height="match_parent" />-->
 
-    <Button
-        android:id="@+id/refreshButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:text="Refresh"
-        android:textColor="@android:color/holo_red_dark"
-        android:textSize="40sp" />
+    <!--    <Button-->
+    <!--        android:id="@+id/refreshButton"-->
+    <!--        android:layout_width="wrap_content"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:layout_centerHorizontal="true"-->
+    <!--        android:layout_centerVertical="true"-->
+    <!--        android:text="Refresh"-->
+    <!--        android:textColor="@android:color/holo_red_dark"-->
+    <!--        android:textSize="40sp" />-->
 
 </RelativeLayout>
