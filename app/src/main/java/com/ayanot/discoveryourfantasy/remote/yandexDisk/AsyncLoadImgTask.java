@@ -32,12 +32,16 @@ public class AsyncLoadImgTask extends AsyncTask<String, Void, List<Image>> {
         int limit = (pageNumber == 1) ? 8 : 16;
         synchronized (this) {
             try {
-                return Downloader.getImages(strings[0], offset, limit);
+                if (strings.length == 1)
+                    return Downloader.getImages(strings[0], offset, limit);
+                if (strings.length == 2)
+                    return Downloader.getImagesWithRegex(strings[1]);
             } catch (IOException | ServerIOException e) {
                 Log.e(TAG, e.getMessage());
                 e.printStackTrace();
                 return null;
             }
+            return null;
         }
     }
 

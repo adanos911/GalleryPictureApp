@@ -121,9 +121,11 @@ public class ImageRecycleAdapter extends RecyclerView.Adapter {
                 public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
                     image.setBitmap(BitmapHelper.getBytesArray(bitmap, Bitmap.CompressFormat.JPEG));
                     ((ImgLoadViewHolder) holder).imageView.setImageBitmap(bitmap);
-                    databaseAdapter.open();
-                    if (position < 8 && databaseAdapter.getCount() <= 8) {
-                        image.setId(databaseAdapter.insert(image));
+                    if (databaseAdapter != null) {
+                        databaseAdapter.open();
+                        if (position < 8 && databaseAdapter.getCount() <= 8) {
+                            image.setId(databaseAdapter.insert(image));
+                        }
                         databaseAdapter.close();
                     }
                 }

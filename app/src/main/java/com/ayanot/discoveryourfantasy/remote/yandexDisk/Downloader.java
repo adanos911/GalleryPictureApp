@@ -9,6 +9,7 @@ import com.yandex.disk.rest.json.ResourceList;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import static com.ayanot.discoveryourfantasy.MainActivity.REST_CLIENT;
 
@@ -47,7 +48,25 @@ public class Downloader {
         return images;
     }
 
-    public static Image getPreviewImage(String path, int offset) throws IOException, ServerIOException {
+    public static List<Image> getImagesWithRegex(String regex) throws IOException, ServerIOException {
+        List<Image> matches = new ArrayList<>();
+        Pattern pattern = Pattern.compile(regex);
+        ResourceList resourceList = REST_CLIENT.getFlatResourceList(new ResourcesArgs.Builder()
+                .setMediaType("image")
+                .setLimit(Integer.MAX_VALUE)
+                .setFields("items.name, items.preview, items.path")
+                .setPath("/")
+                .build());
+        for (Resource res : resourceList.getItems()) {
+            if (pattern.matcher(res.getName()).matches())
+                matches.add(new Image(res.getName(), res.getPreview(),
+                        "", res.getPath().getPath()));
+        }
+
+        return matches;
+    }
+
+    public static Image getPreviewImage(int offset) throws IOException, ServerIOException {
         ResourceList resourceList = REST_CLIENT.getFlatResourceList(new ResourcesArgs.Builder()
                 .setLimit(1)
                 .setMediaType("image")

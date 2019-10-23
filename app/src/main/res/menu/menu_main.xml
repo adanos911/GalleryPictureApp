@@ -7,8 +7,9 @@
         android:id="@+id/action_search"
         android:icon="@drawable/search"
         android:orderInCategory="1"
-        android:title="Search"
-        app:showAsAction="ifRoom" />
+        android:title="@string/search_text"
+        app:actionViewClass="android.widget.SearchView"
+        app:showAsAction="collapseActionView|ifRoom" />
     <item
         android:id="@+id/action_settings"
         android:orderInCategory="3"
