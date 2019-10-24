@@ -12,8 +12,8 @@
 
     <!--    <fragment-->
     <!--        android:layout_below="@id/mainToolbar"-->
-    <!--        android:id="@+id/contentImageFragment"-->
-    <!--        android:name="com.ayanot.discoveryourfantasy.ContentImageFragment"-->
+    <!--        android:id="@+id/contentImageFragmentImp"-->
+    <!--        android:name="com.ayanot.discoveryourfantasy.ContentImageFragmentImpImp"-->
     <!--        android:layout_width="match_parent"-->
     <!--        android:layout_height="match_parent" />-->
 

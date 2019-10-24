@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
         connectionDetector = new ConnectionDetector(this);
 
         if (connectionDetector.isNetworkConnected())
-            addFragment(new ContentImageFragment());
+            addFragment(new ContentImageFragmentImp());
         else {
             DatabaseAdapter databaseAdapter = new DatabaseAdapter(this);
             databaseAdapter.open();
@@ -54,9 +54,9 @@ public class MainActivity extends AppCompatActivity {
             databaseAdapter.close();
             Bundle bundleCacheImg = new Bundle();
             bundleCacheImg.putParcelableArrayList(ArrayList.class.getSimpleName(), (ArrayList<? extends Parcelable>) images);
-            ContentImageFragment contentImageFragment = new ContentImageFragment();
-            contentImageFragment.setArguments(bundleCacheImg);
-            addFragment(contentImageFragment);
+            ContentImageFragmentImp contentImageFragmentImp = new ContentImageFragmentImp();
+            contentImageFragmentImp.setArguments(bundleCacheImg);
+            addFragment(contentImageFragmentImp);
         }
         setSupportActionBar(toolbar);
     }

@@ -1,105 +1,128 @@
 package com.ayanot.discoveryourfantasy;
 
-import android.os.Bundle;
-import android.view.LayoutInflater;
+import android.content.Intent;
+import android.os.Handler;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.ayanot.discoveryourfantasy.dataBase.cache.DatabaseAdapter;
 import com.ayanot.discoveryourfantasy.entity.Image;
 import com.ayanot.discoveryourfantasy.entity.adapter.ImageRecycleAdapter;
+import com.ayanot.discoveryourfantasy.entity.adapter.SpacesItemDecoration;
 import com.ayanot.discoveryourfantasy.helpUtil.ConnectionDetector;
 import com.ayanot.discoveryourfantasy.remote.yandexDisk.AsyncLoadImgTask;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ContentImageFragment extends ContentImageFragmentInterface {
-    private static final String TAG = "ContentImageFragment";
-
-    private static int offset;
-    private List<Image> cacheImages;
-    private ConnectionDetector connectionDetector;
-    private DatabaseAdapter databaseAdapter;
+public abstract class ContentImageFragment extends Fragment implements AsyncLoadImgTask.OnTaskCompleted {
     private RecyclerView recyclerView;
+    private ImageRecycleAdapter recycleAdapter;
+    private List<Image> imageList;
 
-    @Nullable
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.content_image_fragment, container, false);
-        if (getArguments() != null) {
-            cacheImages = getArguments().getParcelableArrayList(ArrayList.class.getSimpleName());
-        }
+    private DatabaseAdapter databaseAdapter = null;
+    private Handler handler;
 
-        setDatabaseAdapter(new DatabaseAdapter(getActivity()));
-        setParameters(view);
+    private int pageNumber;
 
-        return view;
-    }
+    protected void initRecycleView(RecyclerView recyclerView) {
+        if (imageList == null)
+            imageList = new ArrayList<>();
+        handler = new Handler();
+        pageNumber = 1;
 
-    @Override
-    public void onPause() {
-        super.onPause();
-//        if (getArguments() != null)
-//            getArguments().remove(ArrayList.class.getSimpleName());
-    }
+        StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setItemViewCacheSize(2);
 
-    private void setParameters(View view) {
-        if (cacheImages != null) {
-            setImageList(new ArrayList<Image>());
-            getImageList().addAll(cacheImages);
-        }
-        offset = 0;
-        connectionDetector = initConnectionDetector();
-        databaseAdapter = getDatabaseAdapter();
-        recyclerView = view.findViewById(R.id.recycleView);
+        recycleAdapter = new ImageRecycleAdapter(imageList, recyclerView, databaseAdapter);
 
-        initRecycleView(recyclerView);
-        setLoadMoreListener(getRecycleAdapter());
-
-    }
-
-    private void getLoadImg() {
-        databaseAdapter.open();
-        int i = getPageNumber();
-        if (i == 1 && databaseAdapter.getCount() > 8) {
-            databaseAdapter.refresh();
-            databaseAdapter.close();
-        }
-        AsyncLoadImgTask asyncLoadImgTask = new AsyncLoadImgTask(this, offset, i);
-        offset += (i == 1 ? 8 : 16);
-        asyncLoadImgTask.execute("/");
-    }
-
-    @Override
-    protected void setLoadMoreListener(final ImageRecycleAdapter recycleAdapter) {
-        if (connectionDetector.isNetworkConnected())
-            getLoadImg();
-        recycleAdapter.setOnLoadMoreListener(new ImageRecycleAdapter.OnLoadMoreListener() {
+        recycleAdapter.setOnItemClickListener(new ImageRecycleAdapter.OnItemClickListener() {
             @Override
-            public void onLoadMore() {
-                if (connectionDetector.isNetworkConnected()) {
-                    getImageList().add(null);
-                    recyclerView.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            recycleAdapter.notifyItemInserted(getImageList().size() - 1);
-                        }
-                    });
-                    int i = getPageNumber();
-                    setPageNumber(++i);
-                    getLoadImg();
-                } else {
-                    Toast.makeText(getActivity(), "Please check your internet connection", Toast.LENGTH_SHORT)
-                            .show();
-                }
+            public void onItemClick(View itemView, int position) {
+                Image image = recycleAdapter.getItem(position);
+                Intent intent = new Intent(getActivity(), ImageActivity.class);
+                intent.putExtra(Image.class.getSimpleName(), image);
+                startActivity(intent);
             }
         });
+        recyclerView.setAdapter(recycleAdapter);
+        recyclerView.addItemDecoration(new SpacesItemDecoration(4, 16));
+    }
+
+    protected ConnectionDetector initConnectionDetector() {
+        return new ConnectionDetector(getActivity());
+    }
+
+    protected abstract void setLoadMoreListener(ImageRecycleAdapter recycleAdapter);
+
+    @Override
+    public void onTaskCompleted(List<Image> responseImage) {
+        if (pageNumber > 1) {
+            imageList.remove(imageList.size() - 1);
+            recycleAdapter.notifyItemRemoved(imageList.size());
+        }
+        for (Image image : responseImage) {
+            imageList.add(image);
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    recycleAdapter.notifyItemInserted(imageList.size());
+                }
+            });
+        }
+        recycleAdapter.setLoaded();
+    }
+
+    public RecyclerView getRecyclerView() {
+        return recyclerView;
+    }
+
+    public void setRecyclerView(RecyclerView recyclerView) {
+        this.recyclerView = recyclerView;
+    }
+
+    public ImageRecycleAdapter getRecycleAdapter() {
+        return recycleAdapter;
+    }
+
+    public void setRecycleAdapter(ImageRecycleAdapter recycleAdapter) {
+        this.recycleAdapter = recycleAdapter;
+    }
+
+    public List<Image> getImageList() {
+        return imageList;
+    }
+
+    public void setImageList(List<Image> imageList) {
+        this.imageList = imageList;
+    }
+
+    public DatabaseAdapter getDatabaseAdapter() {
+        return databaseAdapter;
+    }
+
+    public void setDatabaseAdapter(DatabaseAdapter databaseAdapter) {
+        this.databaseAdapter = databaseAdapter;
+    }
+
+    public Handler getHandler() {
+        return handler;
+    }
+
+    public void setHandler(Handler handler) {
+        this.handler = handler;
+    }
+
+    public int getPageNumber() {
+        return pageNumber;
+    }
+
+    public void setPageNumber(int pageNumber) {
+        this.pageNumber = pageNumber;
     }
 }

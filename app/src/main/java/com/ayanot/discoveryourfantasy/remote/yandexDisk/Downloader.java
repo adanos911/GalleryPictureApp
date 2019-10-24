@@ -25,7 +25,7 @@ public class Downloader {
                     .setMediaType("image")
                     .setOffset(offset)
                     .setSort(ResourcesArgs.Sort.name)
-                    .setPreviewSize("M")
+                    .setPreviewSize("S")
                     .build());
             for (Resource res : resources.getItems()) {
                 images.add(new Image(res.getName(), res.getPreview(),
@@ -55,6 +55,7 @@ public class Downloader {
                 .setMediaType("image")
                 .setLimit(Integer.MAX_VALUE)
                 .setFields("items.name, items.preview, items.path")
+                .setPreviewSize("M")
                 .setPath("/")
                 .build());
         for (Resource res : resourceList.getItems()) {

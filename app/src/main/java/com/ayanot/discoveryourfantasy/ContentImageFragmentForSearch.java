@@ -14,8 +14,8 @@ import com.ayanot.discoveryourfantasy.entity.adapter.ImageRecycleAdapter;
 import com.ayanot.discoveryourfantasy.helpUtil.ConnectionDetector;
 import com.ayanot.discoveryourfantasy.remote.yandexDisk.AsyncLoadImgTask;
 
-//TODO: NEED CREATE ABSTRACT CLASS FOR @this and @ContentImageFragment
-public class ContentImageFragmentForSearch extends ContentImageFragmentInterface {
+//TODO: NEED CREATE ABSTRACT CLASS FOR @this and @ContentImageFragmentImp
+public class ContentImageFragmentForSearch extends ContentImageFragment {
     private static int offset;
     private RecyclerView recyclerView;
     private ConnectionDetector connectionDetector;
