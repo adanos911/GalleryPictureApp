@@ -3,9 +3,11 @@ package com.ayanot.discoveryourfantasy.entity.adapter;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
@@ -181,6 +183,14 @@ public class ImageRecycleAdapter extends RecyclerView.Adapter {
                     }
                 }
             });
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    itemView.setVisibility(View.VISIBLE);
+                    itemView.setAnimation(AnimationUtils.loadAnimation(context, R.anim.item_animation));
+                }
+            }, 100);
+            setIsRecyclable(true);
         }
     }
 
