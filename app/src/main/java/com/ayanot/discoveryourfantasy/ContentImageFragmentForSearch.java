@@ -44,8 +44,9 @@ public class ContentImageFragmentForSearch extends ContentImageFragmentInterface
     }
 
     private void getLoadImg() {
-        AsyncLoadImgTask asyncLoadImgTask = new AsyncLoadImgTask(this, offset, getPageNumber());
-        offset += (getPageNumber() == 1 ? 8 : 16);
+        int i = getPageNumber();
+        AsyncLoadImgTask asyncLoadImgTask = new AsyncLoadImgTask(this, offset, i);
+        offset += (i == 1 ? 8 : 16);
         asyncLoadImgTask.execute("/", query);
     }
 
