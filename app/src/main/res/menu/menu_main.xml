@@ -11,6 +11,12 @@
         app:actionViewClass="android.widget.SearchView"
         app:showAsAction="collapseActionView|ifRoom" />
     <item
+        android:id="@+id/clear_history"
+        android:icon="@drawable/clear_button"
+        android:orderInCategory="2"
+        android:title="Clear history"
+        app:showAsAction="ifRoom" />
+    <item
         android:id="@+id/action_settings"
         android:orderInCategory="3"
         android:title="Settings"

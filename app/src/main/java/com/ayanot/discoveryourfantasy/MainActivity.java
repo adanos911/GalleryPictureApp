@@ -5,6 +5,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.provider.SearchRecentSuggestions;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.SearchView;
@@ -17,6 +18,7 @@ import androidx.fragment.app.Fragment;
 import com.ayanot.discoveryourfantasy.dataBase.cache.DatabaseAdapter;
 import com.ayanot.discoveryourfantasy.entity.Image;
 import com.ayanot.discoveryourfantasy.helpUtil.ConnectionDetector;
+import com.ayanot.discoveryourfantasy.helpUtil.SearchSuggestionProvider;
 import com.ayanot.discoveryourfantasy.remote.yandexDisk.Credentials;
 import com.ayanot.discoveryourfantasy.remote.yandexDisk.RestClient;
 import com.ayanot.discoveryourfantasy.remote.yandexDisk.RestClientFactory;
@@ -77,6 +79,11 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.clear_history) {
+            SearchRecentSuggestions suggestions = new SearchRecentSuggestions(this,
+                    SearchSuggestionProvider.AUTHORITY, SearchSuggestionProvider.MODE);
+            suggestions.clearHistory();
+        }
         return super.onOptionsItemSelected(item);
     }
 
