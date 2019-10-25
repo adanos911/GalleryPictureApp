@@ -43,7 +43,8 @@ public class ImageRecycleAdapter extends RecyclerView.Adapter {
     private Picasso picasso;
     private DatabaseAdapter databaseAdapter;
 
-    public ImageRecycleAdapter(final List<Image> images, RecyclerView recyclerView, DatabaseAdapter databaseAdapter) {
+    public ImageRecycleAdapter(final List<Image> images, RecyclerView recyclerView,
+                               DatabaseAdapter databaseAdapter) {
         this.images = images;
         this.databaseAdapter = databaseAdapter;
         if (recyclerView.getLayoutManager() instanceof StaggeredGridLayoutManager) {
@@ -56,7 +57,8 @@ public class ImageRecycleAdapter extends RecyclerView.Adapter {
                         public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                             super.onScrolled(recyclerView, dx, dy);
                             totalItemCount = staggeredGridLayoutManager.getItemCount();
-                            lastVisibleItem = staggeredGridLayoutManager.findLastVisibleItemPositions(null);
+                            lastVisibleItem = staggeredGridLayoutManager.
+                                    findLastVisibleItemPositions(null);
                             if (!loading && (totalItemCount <= (lastVisibleItem[1] + visibleThreshold))) {
                                 if (onLoadMoreListener != null) {
                                     onLoadMoreListener.onLoadMore();
@@ -187,7 +189,8 @@ public class ImageRecycleAdapter extends RecyclerView.Adapter {
                 @Override
                 public void run() {
                     itemView.setVisibility(View.VISIBLE);
-                    itemView.setAnimation(AnimationUtils.loadAnimation(context, R.anim.item_animation));
+                    itemView.setAnimation(AnimationUtils
+                            .loadAnimation(context, R.anim.item_animation));
                 }
             }, 100);
             setIsRecyclable(true);

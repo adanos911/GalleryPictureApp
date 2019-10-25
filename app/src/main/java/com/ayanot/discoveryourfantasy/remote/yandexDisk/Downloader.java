@@ -15,7 +15,8 @@ import static com.ayanot.discoveryourfantasy.MainActivity.REST_CLIENT;
 
 public class Downloader {
 
-    public static List<Image> getImages(String path, int offset, Integer limit) throws IOException, ServerIOException {
+    public static List<Image> getImages(String path, int offset, Integer limit)
+            throws IOException, ServerIOException {
         List<Image> images = new ArrayList<>();
         ResourceList resources;
         Resource resource;
@@ -79,7 +80,8 @@ public class Downloader {
         return new Image(resource.getName(), resource.getPreview(), "", resource.getPath().getPath());
     }
 
-    public static String getPreviewCustomSize(String path, String size) throws IOException, ServerIOException {
+    public static String getPreviewCustomSize(String path, String size)
+            throws IOException, ServerIOException {
         Resource resource = REST_CLIENT.getResources(new ResourcesArgs.Builder()
                 .setPath(path)
                 .setFields("preview")

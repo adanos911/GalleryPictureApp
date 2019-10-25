@@ -58,8 +58,8 @@ public class ContentImageFragmentForSearch extends ContentImageFragment {
             @Override
             public void onLoadMore() {
                 if (!connectionDetector.isNetworkConnected())
-                    Toast.makeText(getActivity(), "Please check your internet connection", Toast.LENGTH_SHORT)
-                            .show();
+                    Toast.makeText(getActivity(), "Please check your internet connection",
+                            Toast.LENGTH_SHORT).show();
             }
         });
     }

@@ -102,7 +102,8 @@ public class ImageActivity extends AppCompatActivity {
                 image.setHref(REST_CLIENT.getDownloadLink(image.getPath()).getHref());
                 URL url = new URL(image.getHref());
                 bitmap = BitmapFactory.decodeStream(url.openConnection().getInputStream());
-                MediaStore.Images.Media.insertImage(getContentResolver(), bitmap, image.getName(), "");
+                MediaStore.Images.Media.insertImage(getContentResolver(), bitmap,
+                        image.getName(), "");
             } catch (IOException | ServerIOException e) {
                 e.printStackTrace();
             }

@@ -18,7 +18,8 @@ import com.ayanot.discoveryourfantasy.remote.yandexDisk.AsyncLoadImgTask;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class ContentImageFragment extends Fragment implements AsyncLoadImgTask.OnTaskCompleted {
+public abstract class ContentImageFragment extends Fragment
+        implements AsyncLoadImgTask.OnTaskCompleted {
     private RecyclerView recyclerView;
     private ImageRecycleAdapter recycleAdapter;
     private List<Image> imageList;
@@ -34,7 +35,8 @@ public abstract class ContentImageFragment extends Fragment implements AsyncLoad
         handler = new Handler();
         pageNumber = 1;
 
-        StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+        StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager
+                (2, StaggeredGridLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
         recyclerView.setItemViewCacheSize(2);

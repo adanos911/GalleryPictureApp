@@ -54,7 +54,8 @@ public class DatabaseAdapter {
 
     public Image getImage(long id) {
         Image image = null;
-        String query = String.format("select * from %s where %s=?", DatabaseHelper.TABLE, DatabaseHelper.COLUMN_ID);
+        String query = String.format("select * from %s where %s=?",
+                DatabaseHelper.TABLE, DatabaseHelper.COLUMN_ID);
         Cursor cursor = database.rawQuery(query, new String[]{String.valueOf(id)});
         if (cursor.moveToFirst()) {
             image = getImageIntoCursor(cursor);

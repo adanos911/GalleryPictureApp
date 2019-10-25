@@ -96,8 +96,8 @@ public class ContentImageFragmentImp extends ContentImageFragment {
                     setPageNumber(++i);
                     getLoadImg();
                 } else {
-                    Toast.makeText(getActivity(), "Please check your internet connection", Toast.LENGTH_SHORT)
-                            .show();
+                    Toast.makeText(getActivity(), "Please check your internet connection",
+                            Toast.LENGTH_SHORT).show();
                 }
             }
         });

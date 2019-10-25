@@ -33,7 +33,8 @@ public class RestClient extends com.yandex.disk.rest.RestClient {
 
     private void setCloudApi() {
         try {
-            Field cloudApiField = com.yandex.disk.rest.RestClient.class.getDeclaredField("cloudApi");
+            Field cloudApiField = com.yandex.disk.rest.RestClient.class.
+                    getDeclaredField("cloudApi");
             cloudApiField.setAccessible(true);
             this.cloudApi = (CloudApi) cloudApiField.get(this);
             cloudApiField.setAccessible(false);

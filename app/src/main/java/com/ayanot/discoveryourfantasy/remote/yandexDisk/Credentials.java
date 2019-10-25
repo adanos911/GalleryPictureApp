@@ -5,7 +5,8 @@ import android.os.Parcelable;
 
 public class Credentials extends com.yandex.disk.rest.Credentials implements Parcelable {
 
-    public static final Parcelable.Creator<Credentials> CREATOR = new Parcelable.Creator<Credentials>() {
+    public static final Parcelable.Creator<Credentials> CREATOR =
+            new Parcelable.Creator<Credentials>() {
         @Override
         public Credentials createFromParcel(Parcel source) {
             return new Credentials(source.readString(), source.readString());

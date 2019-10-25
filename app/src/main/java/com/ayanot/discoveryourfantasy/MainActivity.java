@@ -27,7 +27,8 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
     public static final String CLIENT_ID = BuildConfig.CLIENT_ID;
     public static final String USER_NAME = BuildConfig.USER_NAME;
-    public static final String AUTH_URL = "https://oauth.yandex.ru/authorize?response_type=token&client_id=" + CLIENT_ID;
+    public static final String AUTH_URL =
+            "https://oauth.yandex.ru/authorize?response_type=token&client_id=" + CLIENT_ID;
     public static final String TOKEN = BuildConfig.TOKEN;
     public static final RestClient REST_CLIENT =
             RestClientFactory.getInstance(new Credentials(MainActivity.USER_NAME, MainActivity.TOKEN));
@@ -53,7 +54,8 @@ public class MainActivity extends AppCompatActivity {
             List<Image> images = databaseAdapter.getImages();
             databaseAdapter.close();
             Bundle bundleCacheImg = new Bundle();
-            bundleCacheImg.putParcelableArrayList(ArrayList.class.getSimpleName(), (ArrayList<? extends Parcelable>) images);
+            bundleCacheImg.putParcelableArrayList(ArrayList.class.getSimpleName(),
+                    (ArrayList<? extends Parcelable>) images);
             ContentImageFragmentImp contentImageFragmentImp = new ContentImageFragmentImp();
             contentImageFragmentImp.setArguments(bundleCacheImg);
             addFragment(contentImageFragmentImp);

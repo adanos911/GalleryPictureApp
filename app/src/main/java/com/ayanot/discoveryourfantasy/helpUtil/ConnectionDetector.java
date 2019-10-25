@@ -12,7 +12,8 @@ public class ConnectionDetector {
     }
 
     public boolean isNetworkConnected() {
-        ConnectivityManager conMan = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        ConnectivityManager conMan = (ConnectivityManager) context
+                .getSystemService(Context.CONNECTIVITY_SERVICE);
         return conMan.getActiveNetworkInfo() != null && conMan.getActiveNetworkInfo().isConnected();
     }
 }
