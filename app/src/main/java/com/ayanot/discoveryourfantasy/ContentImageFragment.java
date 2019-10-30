@@ -8,7 +8,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
-import com.ayanot.discoveryourfantasy.dataBase.cache.DatabaseAdapter;
+import com.ayanot.discoveryourfantasy.dataBase.cache.ImageDatabase;
 import com.ayanot.discoveryourfantasy.entity.Image;
 import com.ayanot.discoveryourfantasy.entity.adapter.ImageRecycleAdapter;
 import com.ayanot.discoveryourfantasy.entity.adapter.SpacesItemDecoration;
@@ -24,7 +24,7 @@ public abstract class ContentImageFragment extends Fragment
     private ImageRecycleAdapter recycleAdapter;
     private List<Image> imageList;
 
-    private DatabaseAdapter databaseAdapter = null;
+    private ImageDatabase imageDatabase;
     private Handler handler;
 
     private int pageNumber;
@@ -39,9 +39,9 @@ public abstract class ContentImageFragment extends Fragment
                 (2, StaggeredGridLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
-        recyclerView.setItemViewCacheSize(2);
+//        recyclerView.setItemViewCacheSize(10);
 
-        recycleAdapter = new ImageRecycleAdapter(imageList, recyclerView, databaseAdapter);
+        recycleAdapter = new ImageRecycleAdapter(imageList, recyclerView);
 
         recycleAdapter.setOnItemClickListener(new ImageRecycleAdapter.OnItemClickListener() {
             @Override
@@ -104,12 +104,12 @@ public abstract class ContentImageFragment extends Fragment
         this.imageList = imageList;
     }
 
-    public DatabaseAdapter getDatabaseAdapter() {
-        return databaseAdapter;
+    public ImageDatabase getImageDatabase() {
+        return imageDatabase;
     }
 
-    public void setDatabaseAdapter(DatabaseAdapter databaseAdapter) {
-        this.databaseAdapter = databaseAdapter;
+    public void setImageDatabase(ImageDatabase imageDatabase) {
+        this.imageDatabase = imageDatabase;
     }
 
     public Handler getHandler() {

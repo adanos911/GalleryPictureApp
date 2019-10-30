@@ -4,9 +4,15 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
 
+@Entity(tableName = "cache_images")
 public class Image implements Parcelable {
 
+    @Ignore
     public static final Creator<Image> CREATOR = new Creator<Image>() {
         @Override
         public Image createFromParcel(Parcel source) {
@@ -19,14 +25,22 @@ public class Image implements Parcelable {
             return new Image[size];
         }
     };
+    @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = "id")
     private long id;
+    @ColumnInfo(name = "name")
     private String name;
+    @ColumnInfo(name = "preview")
     private String preview;
+    @ColumnInfo(name = "href")
     private String href;
+    @ColumnInfo(name = "path")
     private String path;
+    @ColumnInfo(name = "image", typeAffinity = ColumnInfo.BLOB)
     private byte[] bitmap;
 
 
+    @Ignore
     public Image(String name, String preview, String href, String path) {
         this.name = name;
         this.preview = preview;
@@ -34,6 +48,7 @@ public class Image implements Parcelable {
         this.path = path;
     }
 
+    @Ignore
     public Image(long id, String name, String preview, String href, String path) {
         this.id = id;
         this.name = name;

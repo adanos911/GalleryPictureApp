@@ -10,7 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.ayanot.discoveryourfantasy.dataBase.cache.DatabaseAdapter;
+import com.ayanot.discoveryourfantasy.dataBase.cache.ImageDatabase;
 import com.ayanot.discoveryourfantasy.entity.Image;
 import com.ayanot.discoveryourfantasy.entity.adapter.ImageRecycleAdapter;
 import com.ayanot.discoveryourfantasy.helpUtil.ConnectionDetector;
@@ -25,7 +25,6 @@ public class ContentImageFragmentImp extends ContentImageFragment {
     private static int offset;
     private List<Image> cacheImages;
     private ConnectionDetector connectionDetector;
-    private DatabaseAdapter databaseAdapter;
     private RecyclerView recyclerView;
 
     @Nullable
@@ -37,7 +36,7 @@ public class ContentImageFragmentImp extends ContentImageFragment {
             cacheImages = getArguments().getParcelableArrayList(ArrayList.class.getSimpleName());
         }
 
-        setDatabaseAdapter(new DatabaseAdapter(getActivity()));
+        setImageDatabase(ImageDatabase.getInstance(getContext()));
         setParameters(view);
 
         return view;
@@ -57,7 +56,6 @@ public class ContentImageFragmentImp extends ContentImageFragment {
         }
         offset = 0;
         connectionDetector = initConnectionDetector();
-        databaseAdapter = getDatabaseAdapter();
         recyclerView = view.findViewById(R.id.recycleView);
 
         initRecycleView(recyclerView);
@@ -66,12 +64,8 @@ public class ContentImageFragmentImp extends ContentImageFragment {
     }
 
     private void getLoadImg() {
-        databaseAdapter.open();
         int i = getPageNumber();
-        if (i == 1 && databaseAdapter.getCount() > 8) {
-            databaseAdapter.refresh();
-            databaseAdapter.close();
-        }
+//        new AsyncCleaningImageCacheTask(getContext()).execute();
         AsyncLoadImgTask asyncLoadImgTask = new AsyncLoadImgTask(this, offset, i);
         offset += (i == 1 ? 8 : 16);
         asyncLoadImgTask.execute("/");

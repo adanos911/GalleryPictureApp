@@ -1,6 +1,5 @@
 package com.ayanot.discoveryourfantasy;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
@@ -27,6 +26,7 @@ import com.squareup.picasso.Target;
 import com.yandex.disk.rest.exceptions.ServerIOException;
 
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.net.URL;
 
 import static com.ayanot.discoveryourfantasy.MainActivity.REST_CLIENT;
@@ -38,8 +38,8 @@ public class ImageActivity extends AppCompatActivity {
     TextView descriptionImage;
     Toolbar toolbar;
     Image image;
-    final Context context = this;
     Picasso picasso;
+    LinearLayout linLaDownloadProgress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +49,7 @@ public class ImageActivity extends AppCompatActivity {
         imageView = findViewById(R.id.fullScreenImage);
         descriptionImage = findViewById(R.id.descriptionImage);
         toolbar = findViewById(R.id.onImageToolbar);
+        linLaDownloadProgress = findViewById(R.id.linLaDownloadProgress);
 
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
@@ -57,7 +58,7 @@ public class ImageActivity extends AppCompatActivity {
 
         image = getIntent().getExtras().getParcelable(Image.class.getSimpleName());
 
-        new AsyncDownloadImage().execute(image);
+        new AsyncDownloadImageTask(linLaDownloadProgress, imageView, picasso).execute(image);
     }
 
     @Override
@@ -71,7 +72,7 @@ public class ImageActivity extends AppCompatActivity {
                     itemChoose.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            new DownloadToStoreTask().execute();
+                            new AsyncDownloadToStoreTask(ImageActivity.this).execute(image);
                         }
                     });
                 }
@@ -86,24 +87,23 @@ public class ImageActivity extends AppCompatActivity {
         return true;
     }
 
-    class DownloadToStoreTask extends AsyncTask<Void, Void, Void> {
+    static class AsyncDownloadToStoreTask extends AsyncTask<Image, Void, Void> {
         Bitmap bitmap;
+        private final WeakReference<ImageActivity> imageActivityWeakReference;
 
-        @Override
-        protected void onPreExecute() {
-//                imageView.invalidate();
-//                BitmapDrawable drawable = (BitmapDrawable) imageView.getDrawable();
-//                bitmap = drawable.getBitmap();
+        AsyncDownloadToStoreTask(ImageActivity activity) {
+            this.imageActivityWeakReference = new WeakReference<>(activity);
         }
 
         @Override
-        protected Void doInBackground(Void... voids) {
+        protected Void doInBackground(Image... images) {
             try {
+                Image image = images[0];
                 image.setHref(REST_CLIENT.getDownloadLink(image.getPath()).getHref());
                 URL url = new URL(image.getHref());
                 bitmap = BitmapFactory.decodeStream(url.openConnection().getInputStream());
-                MediaStore.Images.Media.insertImage(getContentResolver(), bitmap,
-                        image.getName(), "");
+                MediaStore.Images.Media.insertImage(imageActivityWeakReference.get().getContentResolver(),
+                        bitmap, image.getName(), "");
             } catch (IOException | ServerIOException e) {
                 e.printStackTrace();
             }
@@ -112,22 +112,31 @@ public class ImageActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            Toast.makeText(context, "Load success", Toast.LENGTH_SHORT).show();
+            Toast.makeText(imageActivityWeakReference.get(), "Load success",
+                    Toast.LENGTH_SHORT).show();
         }
     }
 
-    class AsyncDownloadImage extends AsyncTask<Image, Void, String> {
-        LinearLayout linLaDownloadProgress = findViewById(R.id.linLaDownloadProgress);
+    static class AsyncDownloadImageTask extends AsyncTask<Image, Void, String> {
+        private final WeakReference<LinearLayout> linLaDownloadProgress;
+        private final WeakReference<ImageView> imageViewWeakReference;
+        private final Picasso picasso;
+
+        AsyncDownloadImageTask(LinearLayout linearLayout, ImageView imageView, Picasso picasso) {
+            this.linLaDownloadProgress = new WeakReference<>(linearLayout);
+            this.imageViewWeakReference = new WeakReference<>(imageView);
+            this.picasso = picasso;
+        }
 
         @Override
         protected void onPreExecute() {
-            linLaDownloadProgress.setVisibility(View.VISIBLE);
+            linLaDownloadProgress.get().setVisibility(View.VISIBLE);
         }
 
         @Override
         protected String doInBackground(Image... images) {
             try {
-                return Downloader.getPreviewCustomSize(image.getPath(), "XL");
+                return Downloader.getPreviewCustomSize(images[0].getPath(), "XL");
             } catch (IOException | ServerIOException e) {
                 e.printStackTrace();
                 return null;
@@ -139,8 +148,8 @@ public class ImageActivity extends AppCompatActivity {
             Target target = new Target() {
                 @Override
                 public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                    linLaDownloadProgress.setVisibility(View.GONE);
-                    imageView.setImageBitmap(bitmap);
+                    linLaDownloadProgress.get().setVisibility(View.GONE);
+                    imageViewWeakReference.get().setImageBitmap(bitmap);
                 }
 
                 @Override
@@ -152,7 +161,7 @@ public class ImageActivity extends AppCompatActivity {
                 public void onPrepareLoad(Drawable placeHolderDrawable) {
                 }
             };
-            imageView.setTag(target);
+            imageViewWeakReference.get().setTag(target);
             picasso.load(previewUrl).into(target);
         }
     }

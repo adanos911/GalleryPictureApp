@@ -3,6 +3,7 @@ package com.ayanot.discoveryourfantasy.entity.adapter;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,7 +17,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.ayanot.discoveryourfantasy.R;
-import com.ayanot.discoveryourfantasy.dataBase.cache.DatabaseAdapter;
+import com.ayanot.discoveryourfantasy.dataBase.cache.AsyncCleaningImageCacheTask;
+import com.ayanot.discoveryourfantasy.dataBase.cache.ImageDatabase;
 import com.ayanot.discoveryourfantasy.entity.Image;
 import com.ayanot.discoveryourfantasy.helpUtil.BitmapHelper;
 import com.ayanot.discoveryourfantasy.helpUtil.ConnectionDetector;
@@ -24,6 +26,7 @@ import com.ayanot.discoveryourfantasy.picasso.PicassoFactory;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
+import java.lang.ref.WeakReference;
 import java.util.List;
 
 public class ImageRecycleAdapter extends RecyclerView.Adapter {
@@ -41,12 +44,9 @@ public class ImageRecycleAdapter extends RecyclerView.Adapter {
     private OnItemClickListener listener;
     private Context context;
     private Picasso picasso;
-    private DatabaseAdapter databaseAdapter;
 
-    public ImageRecycleAdapter(final List<Image> images, RecyclerView recyclerView,
-                               DatabaseAdapter databaseAdapter) {
+    public ImageRecycleAdapter(final List<Image> images, RecyclerView recyclerView) {
         this.images = images;
-        this.databaseAdapter = databaseAdapter;
         if (recyclerView.getLayoutManager() instanceof StaggeredGridLayoutManager) {
             final StaggeredGridLayoutManager staggeredGridLayoutManager = (StaggeredGridLayoutManager)
                     recyclerView.getLayoutManager();
@@ -125,12 +125,10 @@ public class ImageRecycleAdapter extends RecyclerView.Adapter {
                 public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
                     image.setBitmap(BitmapHelper.getBytesArray(bitmap, Bitmap.CompressFormat.JPEG));
                     ((ImgLoadViewHolder) holder).imageView.setImageBitmap(bitmap);
-                    if (databaseAdapter != null) {
-                        databaseAdapter.open();
-                        if (position < 8 && databaseAdapter.getCount() <= 8) {
-                            image.setId(databaseAdapter.insert(image));
+                    if (position < 8) {
+                        if (connectionDetector.isNetworkConnected()) {
+                            new AsyncSaveImageToDatabase(context).execute(image);
                         }
-                        databaseAdapter.close();
                     }
                 }
 
@@ -146,6 +144,31 @@ public class ImageRecycleAdapter extends RecyclerView.Adapter {
             picasso.load(image.getPreview()).into(target);
         } else {
             ((ProgressViewHolder) holder).progressBar.setIndeterminate(true);
+        }
+    }
+
+    private static class AsyncSaveImageToDatabase extends AsyncTask<Image, Void, Void> {
+        private final WeakReference<Context> contextWeakReference;
+
+        AsyncSaveImageToDatabase(Context context) {
+            this.contextWeakReference = new WeakReference<>(context);
+        }
+
+        @Override
+        protected void onPreExecute() {
+            new AsyncCleaningImageCacheTask(contextWeakReference.get()).execute();
+            super.onPreExecute();
+        }
+
+        @Override
+        protected Void doInBackground(Image... images) {
+            ImageDatabase.getInstance(contextWeakReference.get()).imageDao().insertAll(images);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
         }
     }
 

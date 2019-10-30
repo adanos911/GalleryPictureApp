@@ -3,6 +3,7 @@ package com.ayanot.discoveryourfantasy;
 import android.app.SearchManager;
 import android.content.ComponentName;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.provider.SearchRecentSuggestions;
@@ -15,7 +16,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
-import com.ayanot.discoveryourfantasy.dataBase.cache.DatabaseAdapter;
+import com.ayanot.discoveryourfantasy.dataBase.cache.ImageDatabase;
 import com.ayanot.discoveryourfantasy.entity.Image;
 import com.ayanot.discoveryourfantasy.helpUtil.ConnectionDetector;
 import com.ayanot.discoveryourfantasy.helpUtil.SearchSuggestionProvider;
@@ -23,6 +24,7 @@ import com.ayanot.discoveryourfantasy.remote.yandexDisk.Credentials;
 import com.ayanot.discoveryourfantasy.remote.yandexDisk.RestClient;
 import com.ayanot.discoveryourfantasy.remote.yandexDisk.RestClientFactory;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,16 +53,7 @@ public class MainActivity extends AppCompatActivity {
         if (connectionDetector.isNetworkConnected())
             addFragment(new ContentImageFragmentImp());
         else {
-            DatabaseAdapter databaseAdapter = new DatabaseAdapter(this);
-            databaseAdapter.open();
-            List<Image> images = databaseAdapter.getImages();
-            databaseAdapter.close();
-            Bundle bundleCacheImg = new Bundle();
-            bundleCacheImg.putParcelableArrayList(ArrayList.class.getSimpleName(),
-                    (ArrayList<? extends Parcelable>) images);
-            ContentImageFragmentImp contentImageFragmentImp = new ContentImageFragmentImp();
-            contentImageFragmentImp.setArguments(bundleCacheImg);
-            addFragment(contentImageFragmentImp);
+            new AsyncLoadCacheTask(this).execute();
         }
         setSupportActionBar(toolbar);
     }
@@ -90,5 +83,30 @@ public class MainActivity extends AppCompatActivity {
     private void addFragment(Fragment fragment) {
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.main_activity, fragment).commit();
+    }
+
+    private static class AsyncLoadCacheTask extends AsyncTask<Void, Void, List<Image>> {
+        private final WeakReference<MainActivity> mainActivityWeakReference;
+
+        AsyncLoadCacheTask(MainActivity activity) {
+            this.mainActivityWeakReference = new WeakReference<>(activity);
+        }
+
+        @Override
+        protected List<Image> doInBackground(Void... voids) {
+            return ImageDatabase.getInstance(mainActivityWeakReference.get()).imageDao().getAll();
+        }
+
+        @Override
+        protected void onPostExecute(List<Image> imageList) {
+            Bundle bundleCacheImg = new Bundle();
+            bundleCacheImg.putParcelableArrayList(ArrayList.class.getSimpleName(),
+                    (ArrayList<? extends Parcelable>) imageList);
+            ContentImageFragmentImp contentImageFragmentImp = new ContentImageFragmentImp();
+            contentImageFragmentImp.setArguments(bundleCacheImg);
+            mainActivityWeakReference.get().addFragment(contentImageFragmentImp);
+            super.onPostExecute(imageList);
+        }
+
     }
 }
