@@ -17,8 +17,9 @@
         android:title="Clear history"
         app:showAsAction="ifRoom" />
     <item
-        android:id="@+id/action_settings"
+        android:id="@+id/take_photo"
+        android:icon="@drawable/camera"
         android:orderInCategory="3"
-        android:title="Settings"
+        android:title="Take Photo"
         app:showAsAction="ifRoom" />
 </menu>

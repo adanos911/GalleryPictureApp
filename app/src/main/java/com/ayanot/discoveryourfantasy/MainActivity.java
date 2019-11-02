@@ -3,29 +3,40 @@ package com.ayanot.discoveryourfantasy;
 import android.app.SearchManager;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Parcelable;
+import android.provider.MediaStore;
 import android.provider.SearchRecentSuggestions;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.SearchView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 
 import com.ayanot.discoveryourfantasy.dataBase.cache.ImageDatabase;
 import com.ayanot.discoveryourfantasy.entity.Image;
 import com.ayanot.discoveryourfantasy.helpUtil.ConnectionDetector;
 import com.ayanot.discoveryourfantasy.helpUtil.SearchSuggestionProvider;
+import com.ayanot.discoveryourfantasy.remote.yandexDisk.AsyncUploadImgTask;
 import com.ayanot.discoveryourfantasy.remote.yandexDisk.Credentials;
 import com.ayanot.discoveryourfantasy.remote.yandexDisk.RestClient;
 import com.ayanot.discoveryourfantasy.remote.yandexDisk.RestClientFactory;
 
+import java.io.File;
+import java.io.IOException;
 import java.lang.ref.WeakReference;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -70,15 +81,7 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.clear_history) {
-            SearchRecentSuggestions suggestions = new SearchRecentSuggestions(this,
-                    SearchSuggestionProvider.AUTHORITY, SearchSuggestionProvider.MODE);
-            suggestions.clearHistory();
-        }
-        return super.onOptionsItemSelected(item);
-    }
+    private static final int REQUEST_IMAGE_CAPTURE = 1;
 
     private void addFragment(Fragment fragment) {
         getSupportFragmentManager().beginTransaction()
@@ -108,5 +111,64 @@ public class MainActivity extends AppCompatActivity {
             super.onPostExecute(imageList);
         }
 
+    }
+
+    //--upload image to yandex disk-----------------------------------------------------------------
+    private String currentPhotoPath;
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.clear_history) {
+            SearchRecentSuggestions suggestions = new SearchRecentSuggestions(this,
+                    SearchSuggestionProvider.AUTHORITY, SearchSuggestionProvider.MODE);
+            suggestions.clearHistory();
+        }
+        if (item.getItemId() == R.id.take_photo)
+            dispatchTakePictureIntent();
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            File image = new File(currentPhotoPath);
+            new AsyncUploadImgTask(this).execute(image);
+        }
+    }
+
+    private void dispatchTakePictureIntent() {
+        Intent takePicIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePicIntent.resolveActivity(getPackageManager()) != null) {
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+            // Continue only if the File was successfully created
+            if (photoFile != null) {
+                Uri photoURI = FileProvider.getUriForFile(this,
+                        "com.ayanot.discoveryourfantasy.fileprovider",
+                        photoFile);
+                takePicIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                startActivityForResult(takePicIntent, 1);
+            }
+        }
+    }
+
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+        // Save a file: path for use with ACTION_VIEW intents
+        currentPhotoPath = image.getAbsolutePath();
+        return image;
     }
 }
