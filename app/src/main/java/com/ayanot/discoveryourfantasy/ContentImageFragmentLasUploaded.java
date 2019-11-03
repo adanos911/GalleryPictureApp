@@ -11,19 +11,13 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ayanot.discoveryourfantasy.dataBase.cache.ImageDatabase;
-import com.ayanot.discoveryourfantasy.entity.Image;
 import com.ayanot.discoveryourfantasy.entity.adapter.ImageRecycleAdapter;
 import com.ayanot.discoveryourfantasy.helpUtil.ConnectionDetector;
 import com.ayanot.discoveryourfantasy.remote.yandexDisk.AsyncLoadImgTask;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class ContentImageFragmentImp extends ContentImageFragment {
-    private static final String TAG = "ContentImageFragmentImp";
+public class ContentImageFragmentLasUploaded extends ContentImageFragmentImp {
 
     private static int offset;
-    private List<Image> cacheImages;
     private ConnectionDetector connectionDetector;
     private RecyclerView recyclerView;
 
@@ -32,9 +26,6 @@ public class ContentImageFragmentImp extends ContentImageFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.content_image_fragment, container, false);
-        if (getArguments() != null) {
-            cacheImages = getArguments().getParcelableArrayList(ArrayList.class.getSimpleName());
-        }
 
         setImageDatabase(ImageDatabase.getInstance(getContext()));
         setParameters(view);
@@ -42,18 +33,7 @@ public class ContentImageFragmentImp extends ContentImageFragment {
         return view;
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-//        if (getArguments() != null)
-//            getArguments().remove(ArrayList.class.getSimpleName());
-    }
-
     private void setParameters(View view) {
-        if (cacheImages != null) {
-            setImageList(new ArrayList<Image>());
-            getImageList().addAll(cacheImages);
-        }
         offset = 0;
         connectionDetector = initConnectionDetector();
         recyclerView = view.findViewById(R.id.recycleView);
@@ -65,10 +45,9 @@ public class ContentImageFragmentImp extends ContentImageFragment {
 
     private void getLoadImg() {
         int i = getPageNumber();
-//        new AsyncCleaningImageCacheTask(getContext()).execute();
         AsyncLoadImgTask asyncLoadImgTask = new AsyncLoadImgTask(this, offset, i);
-        offset += (i == 1 ? 6 : 16);
-        asyncLoadImgTask.execute("/");
+        offset += (i == 1 ? 8 : 16);
+        asyncLoadImgTask.execute("/", "lastUploaded");
     }
 
     @Override

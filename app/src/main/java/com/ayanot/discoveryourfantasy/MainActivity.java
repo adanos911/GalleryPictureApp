@@ -30,6 +30,7 @@ import com.ayanot.discoveryourfantasy.remote.yandexDisk.AsyncUploadImgTask;
 import com.ayanot.discoveryourfantasy.remote.yandexDisk.Credentials;
 import com.ayanot.discoveryourfantasy.remote.yandexDisk.RestClient;
 import com.ayanot.discoveryourfantasy.remote.yandexDisk.RestClientFactory;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.io.File;
 import java.io.IOException;
@@ -52,22 +53,9 @@ public class MainActivity extends AppCompatActivity {
 
     Toolbar toolbar;
     ConnectionDetector connectionDetector;
-
-    //Authorization: OAuth
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        toolbar = findViewById(R.id.mainToolbar);
-        connectionDetector = new ConnectionDetector(this);
-
-        if (connectionDetector.isNetworkConnected())
-            addFragment(new ContentImageFragmentImp());
-        else {
-            new AsyncLoadCacheTask(this).execute();
-        }
-        setSupportActionBar(toolbar);
-    }
+    //--upload image to yandex disk-----------------------------------------------------------------
+    private static final int REQUEST_IMAGE_CAPTURE = 1;
+    BottomNavigationView navigationView;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -81,11 +69,71 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    private static final int REQUEST_IMAGE_CAPTURE = 1;
+    //Authorization: OAuth
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        toolbar = findViewById(R.id.mainToolbar);
+        connectionDetector = new ConnectionDetector(this);
+        addBottomNavigationView();
 
-    private void addFragment(Fragment fragment) {
+        if (connectionDetector.isNetworkConnected())
+            loadFragment(new ContentImageFragmentImp());
+        else {
+            new AsyncLoadCacheTask(this).execute();
+        }
+        setSupportActionBar(toolbar);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.clear_history) {
+            SearchRecentSuggestions suggestions = new SearchRecentSuggestions(this,
+                    SearchSuggestionProvider.AUTHORITY, SearchSuggestionProvider.MODE);
+            suggestions.clearHistory();
+        }
+        if (item.getItemId() == R.id.take_photo)
+            dispatchTakePictureIntent();
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        Fragment contentImg =
+                getSupportFragmentManager().findFragmentById(R.id.contentImageFragment);
+//        if (contentImg != null) {
+//            outState.putParcelable();
+//        }
+        super.onSaveInstanceState(outState);
+    }
+
+    private void loadFragment(Fragment fragment) {
         getSupportFragmentManager().beginTransaction()
-                .add(R.id.main_activity, fragment).commit();
+                .replace(R.id.frame_container, fragment)
+                .addToBackStack(null)
+                .commit();
+    }
+
+    private void addBottomNavigationView() {
+        navigationView = findViewById(R.id.navigationPanel);
+        navigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.navigation_library:
+                        loadFragment(new ContentImageFragmentImp());
+                        return true;
+                    case R.id.navigation_last:
+                        loadFragment(new ContentImageFragmentLasUploaded());
+                        return true;
+                    case R.id.navigation_profile:
+                        loadFragment(new ProfileFragment());
+                        return true;
+                }
+                return false;
+            }
+        });
     }
 
     private static class AsyncLoadCacheTask extends AsyncTask<Void, Void, List<Image>> {
@@ -107,26 +155,12 @@ public class MainActivity extends AppCompatActivity {
                     (ArrayList<? extends Parcelable>) imageList);
             ContentImageFragmentImp contentImageFragmentImp = new ContentImageFragmentImp();
             contentImageFragmentImp.setArguments(bundleCacheImg);
-            mainActivityWeakReference.get().addFragment(contentImageFragmentImp);
+            mainActivityWeakReference.get().loadFragment(contentImageFragmentImp);
             super.onPostExecute(imageList);
         }
 
     }
-
-    //--upload image to yandex disk-----------------------------------------------------------------
     private String currentPhotoPath;
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.clear_history) {
-            SearchRecentSuggestions suggestions = new SearchRecentSuggestions(this,
-                    SearchSuggestionProvider.AUTHORITY, SearchSuggestionProvider.MODE);
-            suggestions.clearHistory();
-        }
-        if (item.getItemId() == R.id.take_photo)
-            dispatchTakePictureIntent();
-        return super.onOptionsItemSelected(item);
-    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {

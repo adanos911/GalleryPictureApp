@@ -29,12 +29,14 @@ public class AsyncLoadImgTask extends AsyncTask<String, Void, List<Image>> {
 
     @Override
     protected List<Image> doInBackground(String... strings) {
-        int limit = (pageNumber == 1) ? 8 : 16;
+        int limit = (pageNumber == 1) ? 6 : 16;
         synchronized (this) {
             try {
                 if (strings.length == 1)
                     return Downloader.getImages(strings[0], offset, limit);
-                if (strings.length == 2)
+                else if (strings[1].equals("lastUploaded"))
+                    return Downloader.getLastUploadedImages(offset, limit);
+                else if (strings.length == 2)
                     return Downloader.getImagesWithRegex(strings[1]);
             } catch (IOException | ServerIOException e) {
                 Log.e(TAG, e.getMessage());

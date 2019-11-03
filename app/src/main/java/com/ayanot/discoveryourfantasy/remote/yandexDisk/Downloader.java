@@ -38,13 +38,29 @@ public class Downloader {
                     .setPath(path)
                     .setOffset(offset)
                     .setSort(ResourcesArgs.Sort.name)
-                    .setPreviewSize("M")
+                    .setPreviewSize("S")
                     .build());
             for (Resource res : resource.getResourceList().getItems()) {
                 if (res.getName().contains(".jpg") || res.getName().contains(".png"))
                     images.add(new Image(res.getName(), res.getPreview(),
                             "", res.getPath().getPath()));
             }
+        }
+        return images;
+    }
+
+    public static List<Image> getLastUploadedImages(int offset, Integer limit)
+            throws IOException, ServerIOException {
+        List<Image> images = new ArrayList<>();
+        ResourceList resources = REST_CLIENT.getLastUploadedResources(new ResourcesArgs.Builder()
+                .setLimit(limit)
+                .setMediaType("image")
+                .setOffset(offset)
+                .setPreviewSize("S")
+                .build());
+        for (Resource res : resources.getItems()) {
+            images.add(new Image(res.getName(), res.getPreview(),
+                    "", res.getPath().getPath()));
         }
         return images;
     }
