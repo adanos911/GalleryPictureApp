@@ -45,8 +45,11 @@ public class ImageRecycleAdapter extends RecyclerView.Adapter {
     private Context context;
     private Picasso picasso;
 
+    private RecyclerView recyclerView;
+
     public ImageRecycleAdapter(final List<Image> images, RecyclerView recyclerView) {
         this.images = images;
+        this.recyclerView = recyclerView;
         if (recyclerView.getLayoutManager() instanceof StaggeredGridLayoutManager) {
             final StaggeredGridLayoutManager staggeredGridLayoutManager = (StaggeredGridLayoutManager)
                     recyclerView.getLayoutManager();
@@ -130,6 +133,7 @@ public class ImageRecycleAdapter extends RecyclerView.Adapter {
                             new AsyncSaveImageToDatabase(context).execute(image);
                         }
                     }
+                    ((StaggeredGridLayoutManager) recyclerView.getLayoutManager()).invalidateSpanAssignments();
                 }
 
                 @Override
@@ -164,11 +168,6 @@ public class ImageRecycleAdapter extends RecyclerView.Adapter {
         protected Void doInBackground(Image... images) {
             ImageDatabase.getInstance(contextWeakReference.get()).imageDao().insertAll(images);
             return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
         }
     }
 

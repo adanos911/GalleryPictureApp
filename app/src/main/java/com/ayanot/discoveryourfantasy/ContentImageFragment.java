@@ -37,8 +37,11 @@ public abstract class ContentImageFragment extends Fragment
 
         StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager
                 (2, StaggeredGridLayoutManager.VERTICAL);
+        layoutManager.setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
+        //for fix exception onBind position
+        recyclerView.setItemAnimator(null);
 //        recyclerView.setItemViewCacheSize(10);
 
         recycleAdapter = new ImageRecycleAdapter(imageList, recyclerView);
