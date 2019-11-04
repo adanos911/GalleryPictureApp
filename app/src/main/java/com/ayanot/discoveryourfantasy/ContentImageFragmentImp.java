@@ -67,7 +67,7 @@ public class ContentImageFragmentImp extends ContentImageFragment {
         int i = getPageNumber();
 //        new AsyncCleaningImageCacheTask(getContext()).execute();
         AsyncLoadImgTask asyncLoadImgTask = new AsyncLoadImgTask(this, offset, i);
-        offset += (i == 1 ? 6 : 16);
+        offset += (i == 1 ? 8 : 16);
         asyncLoadImgTask.execute("/");
     }
 

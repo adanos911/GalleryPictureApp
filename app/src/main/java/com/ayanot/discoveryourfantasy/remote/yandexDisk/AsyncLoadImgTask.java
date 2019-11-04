@@ -29,7 +29,7 @@ public class AsyncLoadImgTask extends AsyncTask<String, Void, List<Image>> {
 
     @Override
     protected List<Image> doInBackground(String... strings) {
-        int limit = (pageNumber == 1) ? 6 : 16;
+        int limit = (pageNumber == 1) ? 8 : 16;
         synchronized (this) {
             try {
                 if (strings.length == 1)

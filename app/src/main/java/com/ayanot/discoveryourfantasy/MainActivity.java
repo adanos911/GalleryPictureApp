@@ -51,23 +51,11 @@ public class MainActivity extends AppCompatActivity {
     public static final String DISK_API_URL = "https://cloud-api.yandex.net";
     private static final String TAG = "MainActivity";
 
+    private static final int REQUEST_IMAGE_CAPTURE = 1;
+
     Toolbar toolbar;
     ConnectionDetector connectionDetector;
-    //--upload image to yandex disk-----------------------------------------------------------------
-    private static final int REQUEST_IMAGE_CAPTURE = 1;
     BottomNavigationView navigationView;
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-
-        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
-        searchView.setSearchableInfo(searchManager.
-                getSearchableInfo(new ComponentName(this, SearchResultsActivity.class)));
-        searchView.setQueryHint(getResources().getString(R.string.search_hint));
-        return true;
-    }
 
     //Authorization: OAuth
     @Override
@@ -84,6 +72,18 @@ public class MainActivity extends AppCompatActivity {
             new AsyncLoadCacheTask(this).execute();
         }
         setSupportActionBar(toolbar);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+        searchView.setSearchableInfo(searchManager.
+                getSearchableInfo(new ComponentName(this, SearchResultsActivity.class)));
+        searchView.setQueryHint(getResources().getString(R.string.search_hint));
+        return true;
     }
 
     @Override
@@ -122,7 +122,11 @@ public class MainActivity extends AppCompatActivity {
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.navigation_library:
-                        loadFragment(new ContentImageFragmentImp());
+                        if (connectionDetector.isNetworkConnected()) {
+                            loadFragment(new ContentImageFragmentImp());
+                        } else {
+                            new AsyncLoadCacheTask(MainActivity.this).execute();
+                        }
                         return true;
                     case R.id.navigation_last:
                         loadFragment(new ContentImageFragmentLasUploaded());
@@ -160,6 +164,9 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
+
+    //--upload image to yandex disk-----------------------------------------------------------------
+
     private String currentPhotoPath;
 
     @Override

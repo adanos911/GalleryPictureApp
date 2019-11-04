@@ -21,7 +21,7 @@ public class AsyncCleaningImageCacheTask extends AsyncTask<Void, Void, Integer> 
 
     @Override
     protected void onPostExecute(Integer integer) {
-        if (integer > 8) {
+        if (integer >= 8) {
             new AsyncClearCacheTask(referenceContext.get()).execute();
         }
         super.onPostExecute(integer);
