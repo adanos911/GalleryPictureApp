@@ -59,8 +59,8 @@ public abstract class ContentImageFragment extends Fragment
         recyclerView.addItemDecoration(new SpacesItemDecoration(4, 16));
     }
 
-    protected ConnectionDetector initConnectionDetector() {
-        return new ConnectionDetector(getActivity());
+    protected boolean isNetworkConnection() {
+        return new ConnectionDetector(getActivity()).isNetworkConnected();
     }
 
     protected abstract void setLoadMoreListener(ImageRecycleAdapter recycleAdapter);

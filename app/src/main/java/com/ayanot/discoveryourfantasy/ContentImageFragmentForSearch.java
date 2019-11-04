@@ -11,13 +11,11 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ayanot.discoveryourfantasy.entity.adapter.ImageRecycleAdapter;
-import com.ayanot.discoveryourfantasy.helpUtil.ConnectionDetector;
 import com.ayanot.discoveryourfantasy.remote.yandexDisk.AsyncLoadImgTask;
 
 public class ContentImageFragmentForSearch extends ContentImageFragment {
     private static int offset;
     private RecyclerView recyclerView;
-    private ConnectionDetector connectionDetector;
     private String query;
 
     @Nullable
@@ -35,7 +33,6 @@ public class ContentImageFragmentForSearch extends ContentImageFragment {
 
     private void setParameters(View view) {
         offset = 0;
-        connectionDetector = initConnectionDetector();
         recyclerView = view.findViewById(R.id.recycleView);
 
         initRecycleView(recyclerView);
@@ -52,12 +49,12 @@ public class ContentImageFragmentForSearch extends ContentImageFragment {
 
     @Override
     protected void setLoadMoreListener(ImageRecycleAdapter recycleAdapter) {
-        if (connectionDetector.isNetworkConnected())
+        if (isNetworkConnection())
             getLoadImg();
         recycleAdapter.setOnLoadMoreListener(new ImageRecycleAdapter.OnLoadMoreListener() {
             @Override
             public void onLoadMore() {
-                if (!connectionDetector.isNetworkConnected())
+                if (!isNetworkConnection())
                     Toast.makeText(getActivity(), "Please check your internet connection",
                             Toast.LENGTH_SHORT).show();
             }

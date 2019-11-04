@@ -11,6 +11,7 @@ import android.os.Environment;
 import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.provider.SearchRecentSuggestions;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.SearchView;
@@ -56,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
     Toolbar toolbar;
     ConnectionDetector connectionDetector;
     BottomNavigationView navigationView;
+    Fragment fragment1;
 
     //Authorization: OAuth
     @Override
@@ -66,8 +68,10 @@ public class MainActivity extends AppCompatActivity {
         connectionDetector = new ConnectionDetector(this);
         addBottomNavigationView();
 
+        fragment1 = new ContentImageFragmentImp();
+
         if (connectionDetector.isNetworkConnected())
-            loadFragment(new ContentImageFragmentImp());
+            loadFragment(fragment1);
         else {
             new AsyncLoadCacheTask(this).execute();
         }
@@ -98,15 +102,6 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    protected void onSaveInstanceState(@NonNull Bundle outState) {
-        Fragment contentImg =
-                getSupportFragmentManager().findFragmentById(R.id.contentImageFragment);
-//        if (contentImg != null) {
-//            outState.putParcelable();
-//        }
-        super.onSaveInstanceState(outState);
-    }
 
     private void loadFragment(Fragment fragment) {
         getSupportFragmentManager().beginTransaction()
@@ -117,22 +112,25 @@ public class MainActivity extends AppCompatActivity {
 
     private void addBottomNavigationView() {
         navigationView = findViewById(R.id.navigationPanel);
+        final Fragment fragment2 = new ContentImageFragmentLasUploaded();
+        final Fragment fragment3 = new ProfileFragment();
         navigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.navigation_library:
                         if (connectionDetector.isNetworkConnected()) {
-                            loadFragment(new ContentImageFragmentImp());
+                            Log.d("ALOHA", "FRAGMENT = " + fragment1);
+                            loadFragment(fragment1);
                         } else {
                             new AsyncLoadCacheTask(MainActivity.this).execute();
                         }
                         return true;
                     case R.id.navigation_last:
-                        loadFragment(new ContentImageFragmentLasUploaded());
+                        loadFragment(fragment2);
                         return true;
                     case R.id.navigation_profile:
-                        loadFragment(new ProfileFragment());
+                        loadFragment(fragment3);
                         return true;
                 }
                 return false;

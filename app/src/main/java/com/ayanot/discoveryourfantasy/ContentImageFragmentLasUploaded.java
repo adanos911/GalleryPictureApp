@@ -12,13 +12,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.ayanot.discoveryourfantasy.dataBase.cache.ImageDatabase;
 import com.ayanot.discoveryourfantasy.entity.adapter.ImageRecycleAdapter;
-import com.ayanot.discoveryourfantasy.helpUtil.ConnectionDetector;
 import com.ayanot.discoveryourfantasy.remote.yandexDisk.AsyncLoadImgTask;
 
 public class ContentImageFragmentLasUploaded extends ContentImageFragmentImp {
 
     private static int offset;
-    private ConnectionDetector connectionDetector;
     private RecyclerView recyclerView;
 
     @Nullable
@@ -35,7 +33,6 @@ public class ContentImageFragmentLasUploaded extends ContentImageFragmentImp {
 
     private void setParameters(View view) {
         offset = 0;
-        connectionDetector = initConnectionDetector();
         recyclerView = view.findViewById(R.id.recycleView);
 
         initRecycleView(recyclerView);
@@ -52,12 +49,12 @@ public class ContentImageFragmentLasUploaded extends ContentImageFragmentImp {
 
     @Override
     protected void setLoadMoreListener(final ImageRecycleAdapter recycleAdapter) {
-        if (connectionDetector.isNetworkConnected())
+        if (isNetworkConnection())
             getLoadImg();
         recycleAdapter.setOnLoadMoreListener(new ImageRecycleAdapter.OnLoadMoreListener() {
             @Override
             public void onLoadMore() {
-                if (connectionDetector.isNetworkConnected()) {
+                if (isNetworkConnection()) {
                     getImageList().add(null);
                     recyclerView.post(new Runnable() {
                         @Override

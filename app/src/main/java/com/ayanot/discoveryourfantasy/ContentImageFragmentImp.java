@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.ayanot.discoveryourfantasy.dataBase.cache.ImageDatabase;
 import com.ayanot.discoveryourfantasy.entity.Image;
 import com.ayanot.discoveryourfantasy.entity.adapter.ImageRecycleAdapter;
-import com.ayanot.discoveryourfantasy.helpUtil.ConnectionDetector;
 import com.ayanot.discoveryourfantasy.remote.yandexDisk.AsyncLoadImgTask;
 
 import java.util.ArrayList;
@@ -24,20 +23,21 @@ public class ContentImageFragmentImp extends ContentImageFragment {
 
     private static int offset;
     private List<Image> cacheImages;
-    private ConnectionDetector connectionDetector;
     private RecyclerView recyclerView;
+    private View view;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.content_image_fragment, container, false);
+        if (view == null) {
+            view = inflater.inflate(R.layout.content_image_fragment, container, false);
+            setImageDatabase(ImageDatabase.getInstance(getContext()));
+            setParameters(view);
+        }
         if (getArguments() != null) {
             cacheImages = getArguments().getParcelableArrayList(ArrayList.class.getSimpleName());
         }
-
-        setImageDatabase(ImageDatabase.getInstance(getContext()));
-        setParameters(view);
 
         return view;
     }
@@ -55,7 +55,6 @@ public class ContentImageFragmentImp extends ContentImageFragment {
             getImageList().addAll(cacheImages);
         }
         offset = 0;
-        connectionDetector = initConnectionDetector();
         recyclerView = view.findViewById(R.id.recycleView);
 
         initRecycleView(recyclerView);
@@ -73,12 +72,12 @@ public class ContentImageFragmentImp extends ContentImageFragment {
 
     @Override
     protected void setLoadMoreListener(final ImageRecycleAdapter recycleAdapter) {
-        if (connectionDetector.isNetworkConnected())
+        if (isNetworkConnection())
             getLoadImg();
         recycleAdapter.setOnLoadMoreListener(new ImageRecycleAdapter.OnLoadMoreListener() {
             @Override
             public void onLoadMore() {
-                if (connectionDetector.isNetworkConnected()) {
+                if (isNetworkConnection()) {
                     getImageList().add(null);
                     recyclerView.post(new Runnable() {
                         @Override
