@@ -4,4 +4,6 @@
 
     <string name="search_hint">Search...</string>
     <string name="search_text">Search</string>
+
+    <string name="toast_network_connection_text">Please check your internet connection</string>
 </resources>

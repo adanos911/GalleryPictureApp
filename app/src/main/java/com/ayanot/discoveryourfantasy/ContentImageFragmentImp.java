@@ -29,13 +29,13 @@ public class ContentImageFragmentImp extends ContentImageFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
+        if (getArguments() != null) {
+            cacheImages = getArguments().getParcelableArrayList(ArrayList.class.getSimpleName());
+        }
         if (view == null) {
             view = inflater.inflate(R.layout.content_image_fragment, container, false);
             setImageDatabase(ImageDatabase.getInstance(getContext()));
             setParameters(view);
-        }
-        if (getArguments() != null) {
-            cacheImages = getArguments().getParcelableArrayList(ArrayList.class.getSimpleName());
         }
 
         return view;
@@ -50,7 +50,6 @@ public class ContentImageFragmentImp extends ContentImageFragment {
 
     private void setParameters(View view) {
         if (cacheImages != null) {
-            setImageList(new ArrayList<Image>());
             getImageList().addAll(cacheImages);
         }
         recyclerView = view.findViewById(R.id.recycleView);
@@ -87,8 +86,8 @@ public class ContentImageFragmentImp extends ContentImageFragment {
                     setPageNumber(++i);
                     getLoadImg();
                 } else {
-                    Toast.makeText(getActivity(), "Please check your internet connection",
-                            Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), getResources().getString
+                            (R.string.toast_network_connection_text), Toast.LENGTH_SHORT).show();
                 }
             }
         });

@@ -1,9 +1,12 @@
 package com.ayanot.discoveryourfantasy;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
+import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
@@ -33,13 +36,17 @@ public abstract class ContentImageFragment extends Fragment
 
     private SwipeRefreshLayout swipeRefreshLayout;
 
-    protected void initRecycleView(RecyclerView recyclerView) {
-        if (imageList == null)
-            imageList = new ArrayList<>();
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         handler = new Handler();
         pageNumber = 1;
         offset = 0;
+        if (imageList == null)
+            imageList = new ArrayList<>();
+    }
 
+    protected void initRecycleView(RecyclerView recyclerView) {
         StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager
                 (2, StaggeredGridLayoutManager.VERTICAL);
         layoutManager.setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS);
@@ -69,10 +76,14 @@ public abstract class ContentImageFragment extends Fragment
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                getRecycleAdapter().clear();
-                offset = 0;
-                pageNumber = 1;
-                swipeRefreshLayout.setRefreshing(false);
+                if (isNetworkConnection()) {
+                    getRecycleAdapter().clear();
+                    offset = 0;
+                    pageNumber = 1;
+                    swipeRefreshLayout.setRefreshing(false);
+                } else
+                    Toast.makeText(getActivity(), getResources().getString
+                            (R.string.toast_network_connection_text), Toast.LENGTH_SHORT).show();
             }
         });
     }
