@@ -7,6 +7,7 @@ import android.view.View;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.ayanot.discoveryourfantasy.dataBase.cache.ImageDatabase;
 import com.ayanot.discoveryourfantasy.entity.Image;
@@ -28,12 +29,16 @@ public abstract class ContentImageFragment extends Fragment
     private Handler handler;
 
     private int pageNumber;
+    private int offset;
+
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     protected void initRecycleView(RecyclerView recyclerView) {
         if (imageList == null)
             imageList = new ArrayList<>();
         handler = new Handler();
         pageNumber = 1;
+        offset = 0;
 
         StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager
                 (2, StaggeredGridLayoutManager.VERTICAL);
@@ -57,6 +62,19 @@ public abstract class ContentImageFragment extends Fragment
         });
         recyclerView.setAdapter(recycleAdapter);
         recyclerView.addItemDecoration(new SpacesItemDecoration(4, 16));
+    }
+
+    protected void setRefreshLayout(View view) {
+        swipeRefreshLayout = view.findViewById(R.id.contentImageFragment);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                getRecycleAdapter().clear();
+                offset = 0;
+                pageNumber = 1;
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        });
     }
 
     protected boolean isNetworkConnection() {
@@ -129,5 +147,17 @@ public abstract class ContentImageFragment extends Fragment
 
     public void setPageNumber(int pageNumber) {
         this.pageNumber = pageNumber;
+    }
+
+    public int getOffset() {
+        return offset;
+    }
+
+    public void setOffset(int offset) {
+        this.offset = offset;
+    }
+
+    public SwipeRefreshLayout getSwipeRefreshLayout() {
+        return swipeRefreshLayout;
     }
 }

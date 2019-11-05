@@ -100,6 +100,11 @@ public class ImageRecycleAdapter extends RecyclerView.Adapter {
         return viewHolder;
     }
 
+    public void clear() {
+        images.clear();
+        notifyDataSetChanged();
+    }
+
     public Image getItem(int position) {
         return images.get(position);
     }

@@ -21,7 +21,6 @@ import java.util.List;
 public class ContentImageFragmentImp extends ContentImageFragment {
     private static final String TAG = "ContentImageFragmentImp";
 
-    private static int offset;
     private List<Image> cacheImages;
     private RecyclerView recyclerView;
     private View view;
@@ -54,19 +53,18 @@ public class ContentImageFragmentImp extends ContentImageFragment {
             setImageList(new ArrayList<Image>());
             getImageList().addAll(cacheImages);
         }
-        offset = 0;
         recyclerView = view.findViewById(R.id.recycleView);
 
         initRecycleView(recyclerView);
         setLoadMoreListener(getRecycleAdapter());
-
+        setRefreshLayout(view);
     }
 
     private void getLoadImg() {
         int i = getPageNumber();
-//        new AsyncCleaningImageCacheTask(getContext()).execute();
+        int offset = getOffset();
         AsyncLoadImgTask asyncLoadImgTask = new AsyncLoadImgTask(this, offset, i);
-        offset += (i == 1 ? 8 : 16);
+        setOffset(offset + (i == 1 ? 8 : 16));
         asyncLoadImgTask.execute("/");
     }
 

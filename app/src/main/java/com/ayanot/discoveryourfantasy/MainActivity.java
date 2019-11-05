@@ -11,7 +11,6 @@ import android.os.Environment;
 import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.provider.SearchRecentSuggestions;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.SearchView;
@@ -120,7 +119,6 @@ public class MainActivity extends AppCompatActivity {
                 switch (item.getItemId()) {
                     case R.id.navigation_library:
                         if (connectionDetector.isNetworkConnected()) {
-                            Log.d("ALOHA", "FRAGMENT = " + fragment1);
                             loadFragment(fragment1);
                         } else {
                             new AsyncLoadCacheTask(MainActivity.this).execute();

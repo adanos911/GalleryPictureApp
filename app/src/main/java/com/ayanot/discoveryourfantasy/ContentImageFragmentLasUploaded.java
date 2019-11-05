@@ -16,7 +16,6 @@ import com.ayanot.discoveryourfantasy.remote.yandexDisk.AsyncLoadImgTask;
 
 public class ContentImageFragmentLasUploaded extends ContentImageFragmentImp {
 
-    private static int offset;
     private RecyclerView recyclerView;
 
     @Nullable
@@ -32,18 +31,18 @@ public class ContentImageFragmentLasUploaded extends ContentImageFragmentImp {
     }
 
     private void setParameters(View view) {
-        offset = 0;
         recyclerView = view.findViewById(R.id.recycleView);
 
         initRecycleView(recyclerView);
         setLoadMoreListener(getRecycleAdapter());
-
+        setRefreshLayout(view);
     }
 
     private void getLoadImg() {
         int i = getPageNumber();
+        int offset = getOffset();
         AsyncLoadImgTask asyncLoadImgTask = new AsyncLoadImgTask(this, offset, i);
-        offset += (i == 1 ? 8 : 16);
+        setOffset(offset + (i == 1 ? 8 : 16));
         asyncLoadImgTask.execute("/", "lastUploaded");
     }
 
