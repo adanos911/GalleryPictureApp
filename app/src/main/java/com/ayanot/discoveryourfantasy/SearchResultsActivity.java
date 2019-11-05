@@ -48,7 +48,7 @@ public class SearchResultsActivity extends AppCompatActivity {
     private void addFragment() {
         Bundle bundle = new Bundle();
         bundle.putString(SearchResultsActivity.class.getSimpleName(), query);
-        ContentImageFragmentForSearch fragment = new ContentImageFragmentForSearch();
+        ContentImageForSearchFragment fragment = new ContentImageForSearchFragment();
         fragment.setArguments(bundle);
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.search_results_activity, fragment).commit();

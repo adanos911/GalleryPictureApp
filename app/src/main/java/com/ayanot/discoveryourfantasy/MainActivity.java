@@ -111,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void addBottomNavigationView() {
         navigationView = findViewById(R.id.navigationPanel);
-        final Fragment fragment2 = new ContentImageFragmentLasUploaded();
+        final Fragment fragment2 = new ContentImageLasUploadedFragment();
         final Fragment fragment3 = new ProfileFragment();
         navigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override

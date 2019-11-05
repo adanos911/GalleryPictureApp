@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.ayanot.discoveryourfantasy.entity.adapter.ImageRecycleAdapter;
 import com.ayanot.discoveryourfantasy.remote.yandexDisk.AsyncLoadImgTask;
 
-public class ContentImageFragmentForSearch extends ContentImageFragment {
+public class ContentImageForSearchFragment extends ContentImageFragment {
 
     private RecyclerView recyclerView;
     private String query;

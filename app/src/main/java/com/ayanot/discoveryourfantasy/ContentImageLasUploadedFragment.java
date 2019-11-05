@@ -14,7 +14,7 @@ import com.ayanot.discoveryourfantasy.dataBase.cache.ImageDatabase;
 import com.ayanot.discoveryourfantasy.entity.adapter.ImageRecycleAdapter;
 import com.ayanot.discoveryourfantasy.remote.yandexDisk.AsyncLoadImgTask;
 
-public class ContentImageFragmentLasUploaded extends ContentImageFragmentImp {
+public class ContentImageLasUploadedFragment extends ContentImageFragmentImp {
 
     private RecyclerView recyclerView;
 
