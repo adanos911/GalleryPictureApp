@@ -1,4 +1,4 @@
-package com.ayanot.discoveryourfantasy.entity.adapter;
+package com.ayanot.discoveryourfantasy.adapter;
 
 import android.graphics.Rect;
 import android.view.View;

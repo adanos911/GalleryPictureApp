@@ -10,8 +10,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.ayanot.discoveryourfantasy.adapter.ImageRecycleAdapter;
 import com.ayanot.discoveryourfantasy.dataBase.cache.ImageDatabase;
-import com.ayanot.discoveryourfantasy.entity.adapter.ImageRecycleAdapter;
 import com.ayanot.discoveryourfantasy.remote.yandexDisk.AsyncLoadImgTask;
 
 public class ContentImageLasUploadedFragment extends ContentImageFragmentImp {

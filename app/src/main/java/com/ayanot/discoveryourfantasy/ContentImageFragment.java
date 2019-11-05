@@ -9,10 +9,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.ayanot.discoveryourfantasy.adapter.ImageRecycleAdapter;
+import com.ayanot.discoveryourfantasy.adapter.SpacesItemDecoration;
 import com.ayanot.discoveryourfantasy.dataBase.cache.ImageDatabase;
 import com.ayanot.discoveryourfantasy.entity.Image;
-import com.ayanot.discoveryourfantasy.entity.adapter.ImageRecycleAdapter;
-import com.ayanot.discoveryourfantasy.entity.adapter.SpacesItemDecoration;
 import com.ayanot.discoveryourfantasy.helpUtil.ConnectionDetector;
 import com.ayanot.discoveryourfantasy.remote.yandexDisk.AsyncLoadImgTask;
 

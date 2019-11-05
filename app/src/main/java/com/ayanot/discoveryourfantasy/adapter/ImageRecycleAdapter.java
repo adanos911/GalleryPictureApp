@@ -1,4 +1,4 @@
-package com.ayanot.discoveryourfantasy.entity.adapter;
+package com.ayanot.discoveryourfantasy.adapter;
 
 import android.content.Context;
 import android.graphics.Bitmap;
