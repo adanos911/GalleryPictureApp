@@ -11,6 +11,7 @@ import android.os.Environment;
 import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.provider.SearchRecentSuggestions;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.SearchView;
@@ -25,6 +26,7 @@ import androidx.fragment.app.Fragment;
 import com.ayanot.discoveryourfantasy.dataBase.cache.ImageDatabase;
 import com.ayanot.discoveryourfantasy.entity.Image;
 import com.ayanot.discoveryourfantasy.helpUtil.ConnectionDetector;
+import com.ayanot.discoveryourfantasy.helpUtil.NotificationProgressBar;
 import com.ayanot.discoveryourfantasy.helpUtil.SearchSuggestionProvider;
 import com.ayanot.discoveryourfantasy.remote.yandexDisk.AsyncUploadImgTask;
 import com.ayanot.discoveryourfantasy.remote.yandexDisk.Credentials;
@@ -57,6 +59,8 @@ public class MainActivity extends AppCompatActivity {
     ConnectionDetector connectionDetector;
     BottomNavigationView navigationView;
     Fragment fragment1;
+    Fragment fragment2;
+    Fragment fragment3;
 
     //Authorization: OAuth
     @Override
@@ -68,6 +72,9 @@ public class MainActivity extends AppCompatActivity {
         addBottomNavigationView();
 
         fragment1 = new ContentImageFragmentImp();
+        fragment2 = new ContentImageLasUploadedFragment();
+        fragment3 = new ProfileFragment();
+        checkOpenAfterNotificationClick();
 
         if (connectionDetector.isNetworkConnected())
             loadFragment(fragment1);
@@ -111,8 +118,6 @@ public class MainActivity extends AppCompatActivity {
 
     private void addBottomNavigationView() {
         navigationView = findViewById(R.id.navigationPanel);
-        final Fragment fragment2 = new ContentImageLasUploadedFragment();
-        final Fragment fragment3 = new ProfileFragment();
         navigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -134,6 +139,15 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
+    }
+
+    private void checkOpenAfterNotificationClick() {
+        String mes = getIntent().getStringExtra(NotificationProgressBar.OPEN_NOTIF_MES);
+        Log.d("ALOHA", "111111111111");
+        if (mes != null && mes.equals("Uploading")) {
+            loadFragment(fragment2);
+            Log.d("ALOHA", "22222222222222222");
+        }
     }
 
     private static class AsyncLoadCacheTask extends AsyncTask<Void, Void, List<Image>> {

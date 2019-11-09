@@ -13,12 +13,12 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.ayanot.discoveryourfantasy.entity.Image;
+import com.ayanot.discoveryourfantasy.helpUtil.NotificationProgressBar;
 import com.ayanot.discoveryourfantasy.picasso.PicassoFactory;
 import com.ayanot.discoveryourfantasy.remote.yandexDisk.Downloader;
 import com.squareup.picasso.Picasso;
@@ -90,15 +90,24 @@ public class ImageActivity extends AppCompatActivity {
     static class AsyncDownloadToStoreTask extends AsyncTask<Image, Void, Void> {
         Bitmap bitmap;
         private final WeakReference<ImageActivity> imageActivityWeakReference;
+        private NotificationProgressBar notificationProgressBar;
+        private Image image;
+
 
         AsyncDownloadToStoreTask(ImageActivity activity) {
             this.imageActivityWeakReference = new WeakReference<>(activity);
+            notificationProgressBar = new NotificationProgressBar(imageActivityWeakReference.get(), "Downloading", 1);
+        }
+
+        @Override
+        protected void onPreExecute() {
+            notificationProgressBar.show();
         }
 
         @Override
         protected Void doInBackground(Image... images) {
             try {
-                Image image = images[0];
+                image = images[0];
                 image.setHref(REST_CLIENT.getDownloadLink(image.getPath()).getHref());
                 URL url = new URL(image.getHref());
                 bitmap = BitmapFactory.decodeStream(url.openConnection().getInputStream());
@@ -112,8 +121,9 @@ public class ImageActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            Toast.makeText(imageActivityWeakReference.get(), "Load success",
-                    Toast.LENGTH_SHORT).show();
+            notificationProgressBar.end("Image: " + image.getName(), "Download success");
+//            Toast.makeText(imageActivityWeakReference.get(), "Load success",
+//                    Toast.LENGTH_SHORT).show();
         }
     }
 
