@@ -11,7 +11,6 @@ import android.os.Environment;
 import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.provider.SearchRecentSuggestions;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.SearchView;
@@ -45,14 +44,11 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
     public static final String CLIENT_ID = BuildConfig.CLIENT_ID;
     public static final String USER_NAME = BuildConfig.USER_NAME;
-    public static final String AUTH_URL =
-            "https://oauth.yandex.ru/authorize?response_type=token&client_id=" + CLIENT_ID;
-    public static final String TOKEN = BuildConfig.TOKEN;
-    public static final RestClient REST_CLIENT =
-            RestClientFactory.getInstance(new Credentials(MainActivity.USER_NAME, MainActivity.TOKEN));
     public static final String DISK_API_URL = "https://cloud-api.yandex.net";
-    private static final String TAG = "MainActivity";
+    public static String TOKEN;//BuildConfig.TOKEN;
+    public static RestClient REST_CLIENT;
 
+    private static final String TAG = "MainActivity";
     private static final int REQUEST_IMAGE_CAPTURE = 1;
 
     Toolbar toolbar;
@@ -62,26 +58,44 @@ public class MainActivity extends AppCompatActivity {
     Fragment fragment2;
     Fragment fragment3;
 
-    //Authorization: OAuth
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         toolbar = findViewById(R.id.mainToolbar);
         connectionDetector = new ConnectionDetector(this);
         addBottomNavigationView();
+        setSupportActionBar(toolbar);
 
         fragment1 = new ContentImageFragmentImp();
         fragment2 = new ContentImageLasUploadedFragment();
         fragment3 = new ProfileFragment();
-        checkOpenAfterNotificationClick();
+    }
 
-        if (connectionDetector.isNetworkConnected())
-            loadFragment(fragment1);
-        else {
-            new AsyncLoadCacheTask(this).execute();
+    private void initToken() {
+        TOKEN = getSharedPreferences(InitActivity.TOKEN_PREF, MODE_PRIVATE)
+                .getString("token", "");
+        REST_CLIENT = RestClientFactory.getInstance(new Credentials(MainActivity.USER_NAME, TOKEN));
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (getSharedPreferences(InitActivity.TOKEN_PREF, MODE_PRIVATE)
+                .getString("token", "").equals("")) {
+            Intent intent = new Intent(MainActivity.this, InitActivity.class);
+            startActivityForResult(intent, 99);
+        } else {
+            initToken();
+            checkOpenAfterNotificationClick();
+
+            if (connectionDetector.isNetworkConnected())
+                loadFragment(fragment1);
+            else {
+                new AsyncLoadCacheTask(this).execute();
+            }
         }
-        setSupportActionBar(toolbar);
     }
 
     @Override
@@ -143,10 +157,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void checkOpenAfterNotificationClick() {
         String mes = getIntent().getStringExtra(NotificationProgressBar.OPEN_NOTIF_MES);
-        Log.d("ALOHA", "111111111111");
         if (mes != null && mes.equals("Uploading")) {
             loadFragment(fragment2);
-            Log.d("ALOHA", "22222222222222222");
         }
     }
 
@@ -186,6 +198,7 @@ public class MainActivity extends AppCompatActivity {
             File image = new File(currentPhotoPath);
             new AsyncUploadImgTask(this).execute(image);
         }
+//        if (requestCode == 99 && resultCode == RESULT_OK) {}
     }
 
     private void dispatchTakePictureIntent() {
@@ -203,7 +216,7 @@ public class MainActivity extends AppCompatActivity {
                         "com.ayanot.discoveryourfantasy.fileprovider",
                         photoFile);
                 takePicIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                startActivityForResult(takePicIntent, 1);
+                startActivityForResult(takePicIntent, REQUEST_IMAGE_CAPTURE);
             }
         }
     }

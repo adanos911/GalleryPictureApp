@@ -38,4 +38,11 @@
         android:hint="Email"
         android:textSize="22sp" />
 
+    <Button
+        android:id="@+id/disconnectButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/emailView"
+        android:text="Disconnect into account" />
+
 </RelativeLayout>
