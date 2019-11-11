@@ -71,24 +71,16 @@ public class ContentImageFragmentImp extends ContentImageFragment {
     protected void setLoadMoreListener(final ImageRecycleAdapter recycleAdapter) {
         if (isNetworkConnection())
             getLoadImg();
-        recycleAdapter.setOnLoadMoreListener(new ImageRecycleAdapter.OnLoadMoreListener() {
-            @Override
-            public void onLoadMore() {
-                if (isNetworkConnection()) {
-                    getImageList().add(null);
-                    recyclerView.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            recycleAdapter.notifyItemInserted(getImageList().size() - 1);
-                        }
-                    });
-                    int i = getPageNumber();
-                    setPageNumber(++i);
-                    getLoadImg();
-                } else {
-                    Toast.makeText(getActivity(), getResources().getString
-                            (R.string.toast_network_connection_text), Toast.LENGTH_SHORT).show();
-                }
+        recycleAdapter.setOnLoadMoreListener(() -> {
+            if (isNetworkConnection()) {
+                getImageList().add(null);
+                recyclerView.post(() -> recycleAdapter.notifyItemInserted(getImageList().size() - 1));
+                int i = getPageNumber();
+                setPageNumber(++i);
+                getLoadImg();
+            } else {
+                Toast.makeText(getActivity(), getResources().getString
+                        (R.string.toast_network_connection_text), Toast.LENGTH_SHORT).show();
             }
         });
     }

@@ -130,29 +130,26 @@ public class MainActivity extends AppCompatActivity {
 
     private void addBottomNavigationView() {
         navigationView = findViewById(R.id.navigationPanel);
-        navigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.navigation_library:
-                        if (connectionDetector.isNetworkConnected()) {
-                            loadFragment(fragment1);
-                            currentFragment = fragment1;
-                        } else {
-                            new AsyncLoadCacheTask(MainActivity.this).execute();
-                        }
-                        return true;
-                    case R.id.navigation_last:
-                        loadFragment(fragment2);
-                        currentFragment = fragment2;
-                        return true;
-                    case R.id.navigation_profile:
-                        loadFragment(fragment3);
-                        currentFragment = fragment3;
-                        return true;
-                }
-                return false;
+        navigationView.setOnNavigationItemSelectedListener(item -> {
+            switch (item.getItemId()) {
+                case R.id.navigation_library:
+                    if (connectionDetector.isNetworkConnected()) {
+                        loadFragment(fragment1);
+                        currentFragment = fragment1;
+                    } else {
+                        new AsyncLoadCacheTask(MainActivity.this).execute();
+                    }
+                    return true;
+                case R.id.navigation_last:
+                    loadFragment(fragment2);
+                    currentFragment = fragment2;
+                    return true;
+                case R.id.navigation_profile:
+                    loadFragment(fragment3);
+                    currentFragment = fragment3;
+                    return true;
             }
+            return false;
         });
     }
 

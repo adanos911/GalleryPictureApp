@@ -9,6 +9,8 @@ import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
+import java.util.Arrays;
+
 @Entity(tableName = "cache_images")
 public class Image implements Parcelable {
 
@@ -137,6 +139,6 @@ public class Image implements Parcelable {
                 + "preview = " + preview + "\n"
                 + "href = " + href + "\n"
                 + "path = " + path + "\n"
-                + "bitmap = " + bitmap;
+                + "bitmap = " + Arrays.toString(bitmap);
     }
 }

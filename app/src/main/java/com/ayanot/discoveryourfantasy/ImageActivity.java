@@ -69,12 +69,8 @@ public class ImageActivity extends AppCompatActivity {
             if (item.getItemId() == R.id.saveButton) {
                 View itemChoose = item.getActionView();
                 if (itemChoose != null) {
-                    itemChoose.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            new AsyncDownloadToStoreTask(ImageActivity.this).execute(image);
-                        }
-                    });
+                    itemChoose.setOnClickListener(v ->
+                            new AsyncDownloadToStoreTask(ImageActivity.this).execute(image));
                 }
             }
         }
@@ -96,7 +92,8 @@ public class ImageActivity extends AppCompatActivity {
 
         AsyncDownloadToStoreTask(ImageActivity activity) {
             this.imageActivityWeakReference = new WeakReference<>(activity);
-            notificationProgressBar = new NotificationProgressBar(imageActivityWeakReference.get(), "Downloading", 1);
+            notificationProgressBar = new NotificationProgressBar
+                    (imageActivityWeakReference.get(), "Downloading", 1);
         }
 
         @Override

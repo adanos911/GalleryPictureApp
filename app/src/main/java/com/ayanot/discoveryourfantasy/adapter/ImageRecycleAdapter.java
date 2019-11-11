@@ -202,23 +202,17 @@ public class ImageRecycleAdapter extends RecyclerView.Adapter {
         ImgLoadViewHolder(final View itemView) {
             super(itemView);
             imageView = itemView.findViewById(R.id.imageView);
-            imageView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (listener != null) {
-                        int position = getAdapterPosition();
-                        if (position != RecyclerView.NO_POSITION)
-                            listener.onItemClick(itemView, position);
-                    }
+            imageView.setOnClickListener(v -> {
+                if (listener != null) {
+                    int position = getAdapterPosition();
+                    if (position != RecyclerView.NO_POSITION)
+                        listener.onItemClick(itemView, position);
                 }
             });
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    itemView.setVisibility(View.VISIBLE);
-                    itemView.setAnimation(AnimationUtils
-                            .loadAnimation(context, R.anim.item_animation));
-                }
+            new Handler().postDelayed(() -> {
+                itemView.setVisibility(View.VISIBLE);
+                itemView.setAnimation(AnimationUtils
+                        .loadAnimation(context, R.anim.item_animation));
             }, 100);
             setIsRecyclable(true);
         }

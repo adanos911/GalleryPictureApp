@@ -54,13 +54,10 @@ public class ContentImageForSearchFragment extends ContentImageFragment {
     protected void setLoadMoreListener(ImageRecycleAdapter recycleAdapter) {
         if (isNetworkConnection())
             getLoadImg();
-        recycleAdapter.setOnLoadMoreListener(new ImageRecycleAdapter.OnLoadMoreListener() {
-            @Override
-            public void onLoadMore() {
-                if (!isNetworkConnection())
-                    Toast.makeText(getActivity(), "Please check your internet connection",
-                            Toast.LENGTH_SHORT).show();
-            }
+        recycleAdapter.setOnLoadMoreListener(() -> {
+            if (!isNetworkConnection())
+                Toast.makeText(getActivity(), "Please check your internet connection",
+                        Toast.LENGTH_SHORT).show();
         });
     }
 }

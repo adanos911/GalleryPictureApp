@@ -58,14 +58,11 @@ public abstract class ContentImageFragment extends Fragment
 
         recycleAdapter = new ImageRecycleAdapter(imageList, recyclerView);
 
-        recycleAdapter.setOnItemClickListener(new ImageRecycleAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(View itemView, int position) {
-                Image image = recycleAdapter.getItem(position);
-                Intent intent = new Intent(getActivity(), ImageActivity.class);
-                intent.putExtra(Image.class.getSimpleName(), image);
-                startActivity(intent);
-            }
+        recycleAdapter.setOnItemClickListener((itemView, position) -> {
+            Image image = recycleAdapter.getItem(position);
+            Intent intent = new Intent(getActivity(), ImageActivity.class);
+            intent.putExtra(Image.class.getSimpleName(), image);
+            startActivity(intent);
         });
         recyclerView.setAdapter(recycleAdapter);
         recyclerView.addItemDecoration(new SpacesItemDecoration(4, 16));
@@ -73,18 +70,15 @@ public abstract class ContentImageFragment extends Fragment
 
     protected void setRefreshLayout(View view) {
         swipeRefreshLayout = view.findViewById(R.id.contentImageFragment);
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                if (isNetworkConnection()) {
-                    getRecycleAdapter().clear();
-                    offset = 0;
-                    pageNumber = 1;
-                    swipeRefreshLayout.setRefreshing(false);
-                } else
-                    Toast.makeText(getActivity(), getResources().getString
-                            (R.string.toast_network_connection_text), Toast.LENGTH_SHORT).show();
-            }
+        swipeRefreshLayout.setOnRefreshListener(() -> {
+            if (isNetworkConnection()) {
+                getRecycleAdapter().clear();
+                offset = 0;
+                pageNumber = 1;
+                swipeRefreshLayout.setRefreshing(false);
+            } else
+                Toast.makeText(getActivity(), getResources().getString
+                        (R.string.toast_network_connection_text), Toast.LENGTH_SHORT).show();
         });
     }
 
@@ -102,12 +96,7 @@ public abstract class ContentImageFragment extends Fragment
         }
         for (Image image : responseImage) {
             imageList.add(image);
-            handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    recycleAdapter.notifyItemInserted(imageList.size());
-                }
-            });
+            handler.post(() -> recycleAdapter.notifyItemInserted(imageList.size()));
         }
         recycleAdapter.setLoaded();
     }
