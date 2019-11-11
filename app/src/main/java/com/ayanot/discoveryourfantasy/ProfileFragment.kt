@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 
 //TODO: Test fragment without realizations
@@ -28,5 +29,15 @@ class ProfileFragment : Fragment() {
         emailView = view.findViewById(R.id.emailView)
         loginView.text = MainActivity.CLIENT_ID
         emailView.text = MainActivity.USER_NAME
+    }
+
+    override fun onResume() {
+        super.onResume()
+        (activity as AppCompatActivity).supportActionBar?.hide()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        (activity as AppCompatActivity).supportActionBar?.show()
     }
 }
