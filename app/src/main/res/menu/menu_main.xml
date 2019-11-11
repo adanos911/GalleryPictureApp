@@ -14,12 +14,12 @@
         android:id="@+id/clear_history"
         android:icon="@drawable/clear_button"
         android:orderInCategory="2"
-        android:title="Clear history"
+        android:title="@string/clear_history"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/take_photo"
         android:icon="@drawable/camera"
         android:orderInCategory="3"
-        android:title="Take Photo"
+        android:title="@string/take_photo"
         app:showAsAction="ifRoom" />
 </menu>

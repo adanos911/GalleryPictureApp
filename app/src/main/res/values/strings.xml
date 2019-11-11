@@ -4,6 +4,13 @@
 
     <string name="search_hint">Search...</string>
     <string name="search_text">Search</string>
+    <string name="clear_history">Clear history</string>
+    <string name="take_photo">Take Photo</string>
 
     <string name="toast_network_connection_text">Please check your internet connection</string>
+
+    <string name="tab_library">Library</string>
+    <string name="tab_last_upload">Last upload</string>
+    <string name="tab_profile">Profile</string>
+    <string name="save_button">Save</string>
 </resources>

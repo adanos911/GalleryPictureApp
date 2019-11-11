@@ -7,7 +7,7 @@
     <item
         android:id="@+id/saveButton"
         android:orderInCategory="1"
-        android:title="Save"
+        android:title="@string/save_button"
         app:actionLayout="@layout/save_button"
         app:showAsAction="always" />
 
