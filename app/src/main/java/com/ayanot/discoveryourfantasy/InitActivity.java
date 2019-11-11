@@ -35,7 +35,7 @@ public class InitActivity extends AppCompatActivity {
                         String partWithToken = matcher.group();
                         String token = partWithToken.substring(14, partWithToken.length() - 1);
                         SharedPreferences tokenPref = getSharedPreferences(TOKEN_PREF, MODE_PRIVATE);
-                        tokenPref.edit().putString("token", token).commit();
+                        tokenPref.edit().putString("token", token).apply();
                         finish();
                     }
 //                    setResult(RESULT_OK);

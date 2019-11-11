@@ -57,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
     Fragment fragment1;
     Fragment fragment2;
     Fragment fragment3;
+    Fragment currentFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
         fragment1 = new ContentImageFragmentImp();
         fragment2 = new ContentImageLasUploadedFragment();
         fragment3 = new ProfileFragment();
+        currentFragment = fragment1;
     }
 
     private void initToken() {
@@ -89,12 +91,6 @@ public class MainActivity extends AppCompatActivity {
         } else {
             initToken();
             checkOpenAfterNotificationClick();
-
-            if (connectionDetector.isNetworkConnected())
-                loadFragment(fragment1);
-            else {
-                new AsyncLoadCacheTask(this).execute();
-            }
         }
     }
 
@@ -139,15 +135,18 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.navigation_library:
                         if (connectionDetector.isNetworkConnected()) {
                             loadFragment(fragment1);
+                            currentFragment = fragment1;
                         } else {
                             new AsyncLoadCacheTask(MainActivity.this).execute();
                         }
                         return true;
                     case R.id.navigation_last:
                         loadFragment(fragment2);
+                        currentFragment = fragment2;
                         return true;
                     case R.id.navigation_profile:
                         loadFragment(fragment3);
+                        currentFragment = fragment3;
                         return true;
                 }
                 return false;
@@ -159,6 +158,12 @@ public class MainActivity extends AppCompatActivity {
         String mes = getIntent().getStringExtra(NotificationProgressBar.OPEN_NOTIF_MES);
         if (mes != null && mes.equals("Uploading")) {
             loadFragment(fragment2);
+        } else {
+            if (connectionDetector.isNetworkConnected())
+                loadFragment(currentFragment);
+            else {
+                new AsyncLoadCacheTask(this).execute();
+            }
         }
     }
 
