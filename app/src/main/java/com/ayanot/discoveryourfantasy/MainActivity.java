@@ -43,9 +43,9 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     public static final String CLIENT_ID = BuildConfig.CLIENT_ID;
-    public static final String USER_NAME = BuildConfig.USER_NAME;
     public static final String DISK_API_URL = "https://cloud-api.yandex.net";
     public static String TOKEN;//BuildConfig.TOKEN;
+    public static String USER_NAME;//BuildConfig.USER_NAME;
     public static RestClient REST_CLIENT;
 
     private static final String TAG = "MainActivity";
@@ -75,10 +75,12 @@ public class MainActivity extends AppCompatActivity {
         currentFragment = fragment1;
     }
 
-    private void initToken() {
+    private void initClient() {
         TOKEN = getSharedPreferences(InitActivity.TOKEN_PREF, MODE_PRIVATE)
                 .getString("token", "");
-        REST_CLIENT = RestClientFactory.getInstance(new Credentials(MainActivity.USER_NAME, TOKEN));
+        USER_NAME = getSharedPreferences(InitActivity.LOGIN_PREF, MODE_PRIVATE)
+                .getString("login", "");
+        REST_CLIENT = RestClientFactory.getInstance(new Credentials(USER_NAME, TOKEN));
     }
 
     @Override
@@ -89,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(MainActivity.this, InitActivity.class);
             startActivityForResult(intent, 99);
         } else {
-            initToken();
+            initClient();
             checkOpenAfterNotificationClick();
         }
     }
@@ -158,6 +160,7 @@ public class MainActivity extends AppCompatActivity {
         String mes = getIntent().getStringExtra(NotificationProgressBar.OPEN_NOTIF_MES);
         if (mes != null && mes.equals("Uploading")) {
             loadFragment(fragment2);
+            getIntent().removeExtra(NotificationProgressBar.OPEN_NOTIF_MES);
         } else {
             if (connectionDetector.isNetworkConnected())
                 loadFragment(currentFragment);

@@ -33,7 +33,7 @@ public class NotificationProgressBar {
         resultIntent.putExtra(OPEN_NOTIF_MES, title);
         PendingIntent resultPendingIntent = PendingIntent.getActivity(context, 0,
                 resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        builder = new NotificationCompat.Builder(context, "1")
+        builder = new NotificationCompat.Builder(context, "10")
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentTitle(title)
                 .setContentText("Loading...")
@@ -77,7 +77,7 @@ public class NotificationProgressBar {
             String name = "download";
             String description = "second";
             int importance = NotificationManager.IMPORTANCE_HIGH; //Important for heads-up notification
-            NotificationChannel channel = new NotificationChannel("1", name, importance);
+            NotificationChannel channel = new NotificationChannel("10", name, importance);
             channel.setDescription(description);
             channel.setShowBadge(true);
             channel.setVibrationPattern(new long[]{0L});

@@ -24,6 +24,7 @@ class ProfileFragment : Fragment() {
         disconnectButton = view.findViewById(R.id.disconnectButton)
         disconnectButton.setOnClickListener {
             activity?.getSharedPreferences(InitActivity.TOKEN_PREF, MODE_PRIVATE)?.edit()?.clear()?.apply()
+            activity?.getSharedPreferences(InitActivity.LOGIN_PREF, MODE_PRIVATE)?.edit()?.clear()?.apply()
         }
         loginView = view.findViewById(R.id.loginView)
         emailView = view.findViewById(R.id.emailView)
