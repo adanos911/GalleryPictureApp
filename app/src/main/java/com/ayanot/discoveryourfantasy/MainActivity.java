@@ -41,6 +41,17 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * <h3>Класс-активити, запускающийся первым при старте приложения.
+ * Строится на основании {@link R.layout#activity_main}
+ * Класс содержит в себе контейнер для фрагментов, в котором переключается фрагменты:
+ * {@link ContentImageFragmentImp}
+ * {@link ContentImageLasUploadedFragment}
+ * {@link ProfileFragment}</h3>
+ *
+ * @author ivan
+ * @version 0.0.1
+ */
 public class MainActivity extends AppCompatActivity {
     public static final String CLIENT_ID = BuildConfig.CLIENT_ID;
     public static final String DISK_API_URL = "https://cloud-api.yandex.net";
@@ -59,6 +70,14 @@ public class MainActivity extends AppCompatActivity {
     Fragment fragment3;
     Fragment currentFragment;
 
+    /**
+     * <p>Метод, вызывающийся при создании активити.
+     *  Инициализирует соответсвующий layout и создает объекты фрагментов,
+     *  для контейнера фрагментов.
+     *  Устанавливает в качестве текущего фрагмента {@link ContentImageFragmentImp}</p>
+     *
+     * @param savedInstanceState - сохраненное состояние активити
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,8 +92,14 @@ public class MainActivity extends AppCompatActivity {
         fragment2 = new ContentImageLasUploadedFragment();
         fragment3 = new ProfileFragment();
         currentFragment = fragment1;
+        if (!connectionDetector.isNetworkConnected())
+            new AsyncLoadCacheTask(this).execute();
     }
 
+    /**
+     * <p>Инициализирует клиента {@link MainActivity#REST_CLIENT},
+     *  для работы с Rest API yandex disk</p>
+     */
     private void initClient() {
         TOKEN = getSharedPreferences(InitActivity.TOKEN_PREF, MODE_PRIVATE)
                 .getString("token", "");
@@ -83,6 +108,9 @@ public class MainActivity extends AppCompatActivity {
         REST_CLIENT = RestClientFactory.getInstance(new Credentials(USER_NAME, TOKEN));
     }
 
+    /**
+     * <p>Активити находится в состоянии активного взаимодействия с пользователем</p>
+     */
     @Override
     protected void onResume() {
         super.onResume();
@@ -96,6 +124,13 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * <p>Устанавливает для данной активити меню, в нашем случае, это верхняя панель.
+     *  Меню определено в файле {@link R.menu#menu_main}</p>
+     *
+     * @param menu - меню в котором размещаются элементы
+     * @return - true или false(надо отображать меню или нет)
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
@@ -108,6 +143,12 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    /**
+     * <p>Обработка нажатий на элементы меню.</p>
+     *
+     * @param item - элемент меню который был выбран
+     * @return
+     */
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.clear_history) {
@@ -121,6 +162,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    /**
+     * <p>Загрузка фрагмента в котейнер фрагментов {@link R.id#frame_container},
+     *  и добавление его в backStack, для возможности возврата на него</p>
+     *
+     * @param fragment - фрагмент на который следует переключиться
+     */
     private void loadFragment(Fragment fragment) {
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.frame_container, fragment)
@@ -128,6 +175,10 @@ public class MainActivity extends AppCompatActivity {
                 .commit();
     }
 
+    /**
+     * <p>Добавление нижней навигационной панели, для переключения между фрагментами,
+     *  панель определена {@link R.id#navigationPanel}</p>
+     */
     private void addBottomNavigationView() {
         navigationView = findViewById(R.id.navigationPanel);
         navigationView.setOnNavigationItemSelectedListener(item -> {
@@ -153,6 +204,14 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * <p>Метод загружающий нужный фрагмент, после выхода активити из состояния onPause
+     *  При стандартном открытие активити открывается текущий фрагмент
+     *  {@link MainActivity#currentFragment},
+     *  Если активити была выведена из состояния pause, с помощью клика по загрузке
+     *  нового изображения, то активити переключается на фрагмент
+     *  {@link ContentImageLasUploadedFragment}</p>
+     */
     private void checkOpenAfterNotificationClick() {
         String mes = getIntent().getStringExtra(NotificationProgressBar.OPEN_NOTIF_MES);
         if (mes != null && mes.equals("Uploading")) {
@@ -161,12 +220,13 @@ public class MainActivity extends AppCompatActivity {
         } else {
             if (connectionDetector.isNetworkConnected())
                 loadFragment(currentFragment);
-            else {
-                new AsyncLoadCacheTask(this).execute();
-            }
         }
     }
 
+    /**
+     * <h3>Вложенный статический класс, для создания асинхронного потока загрузки
+     *  кеша изображений, если при старте приложения нет соединения с интернетом</h3>
+     */
     private static class AsyncLoadCacheTask extends AsyncTask<Void, Void, List<Image>> {
         private final WeakReference<MainActivity> mainActivityWeakReference;
 

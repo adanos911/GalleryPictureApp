@@ -13,6 +13,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.ayanot.discoveryourfantasy.adapter.ImageRecycleAdapter;
 import com.ayanot.discoveryourfantasy.remote.yandexDisk.AsyncLoadImgTask;
 
+/**
+ * <h3>Класс-фрагмент, реализующий {@link ContentImageFragment}
+ * Предназначен для отображения изображений найденных в результате поиска</h3>
+ *
+ * @author ivan
+ * @version 0.0.1
+ */
 public class ContentImageForSearchFragment extends ContentImageFragment {
 
     private RecyclerView recyclerView;
@@ -41,6 +48,11 @@ public class ContentImageForSearchFragment extends ContentImageFragment {
         getSwipeRefreshLayout().setEnabled(false);
     }
 
+    /**
+     * <p>Метод, загружает порцию изображений с yandex disk, начиная с текущего
+     * значения offset {@link ContentImageFragment#getOffset()},
+     * и вставляет их в recycleView</p>
+     */
     private void getLoadImg() {
         int i = getPageNumber();
         int offset = getOffset();

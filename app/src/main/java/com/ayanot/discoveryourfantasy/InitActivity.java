@@ -14,6 +14,14 @@ import java.util.regex.Pattern;
 
 import static com.ayanot.discoveryourfantasy.MainActivity.CLIENT_ID;
 
+/**
+ * <h3>Класс-активити, строится на основании {@link R.layout#activity_init}
+ * Отвечает за аутентификацию пользователя и получения токена, для
+ * доступа к его yandex disk</h3>
+ *
+ * @author ivan
+ * @version 0.0.1
+ */
 public class InitActivity extends AppCompatActivity {
     public static final String AUTH_URL =
             "https://oauth.yandex.ru/authorize?response_type=token&client_id=" + CLIENT_ID;

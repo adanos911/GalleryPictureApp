@@ -9,6 +9,13 @@ import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.List;
 
+/**
+ * <h3>Класс, создающий асинхронный процесс, загружающий изображения с
+ * yandex disk, начиная с текущего значения {@link AsyncLoadImgTask#offset}</h3>
+ *
+ * @author ivan
+ * @version 0.0.1
+ */
 public class AsyncLoadImgTask extends AsyncTask<String, Void, List<Image>> {
     private static final String TAG = "AsyncLoadImgTask";
 

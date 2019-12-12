@@ -8,6 +8,14 @@ import androidx.room.RoomDatabase;
 
 import com.ayanot.discoveryourfantasy.entity.Image;
 
+/**
+ * <h3>Класс, создающий БД, реализует паттер сингелтон
+ * Создает БД для хранения кеша изображения
+ * Используется библиотека {@link androidx.room}</h3>
+ *
+ * @author ivan
+ * @version 0.0.1
+ */
 @Database(entities = {Image.class}, version = 1)
 public abstract class ImageDatabase extends RoomDatabase {
 

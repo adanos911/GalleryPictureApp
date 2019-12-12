@@ -14,6 +14,13 @@ import com.ayanot.discoveryourfantasy.adapter.ImageRecycleAdapter;
 import com.ayanot.discoveryourfantasy.dataBase.cache.ImageDatabase;
 import com.ayanot.discoveryourfantasy.remote.yandexDisk.AsyncLoadImgTask;
 
+/**
+ * <h3>Класс-фрагмент, реализующий {@link ContentImageFragmentImp}
+ * Предназначен для отображения изображений в порядке их добавления на диск</h3>
+ *
+ * @author ivan
+ * @version 0.0.1
+ */
 public class ContentImageLasUploadedFragment extends ContentImageFragmentImp {
 
     private RecyclerView recyclerView;
@@ -38,6 +45,11 @@ public class ContentImageLasUploadedFragment extends ContentImageFragmentImp {
         setRefreshLayout(view);
     }
 
+    /**
+     * <p>Метод, загружает порцию изображений с yandex disk, начиная с текущего
+     * значения offset {@link ContentImageFragment#getOffset()},
+     * и вставляет их в recycleView</p>
+     */
     private void getLoadImg() {
         int i = getPageNumber();
         int offset = getOffset();

@@ -18,6 +18,13 @@ import com.ayanot.discoveryourfantasy.remote.yandexDisk.AsyncLoadImgTask;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * <h3>Класс-фрагмент, реализующий {@link ContentImageFragment}
+ * Основной фрагмент для просмотра галереии изображений</h3>
+ *
+ * @author ivan
+ * @version 0.0.1
+ */
 public class ContentImageFragmentImp extends ContentImageFragment {
     private static final String TAG = "ContentImageFragmentImp";
 
@@ -59,6 +66,11 @@ public class ContentImageFragmentImp extends ContentImageFragment {
         setRefreshLayout(view);
     }
 
+    /**
+     * <p>Метод, загружает порцию изображений с yandex disk, начиная с текущего
+     * значения offset {@link ContentImageFragment#getOffset()},
+     * и вставляет их в recycleView</p>
+     */
     private void getLoadImg() {
         int i = getPageNumber();
         int offset = getOffset();

@@ -9,6 +9,12 @@ import com.ayanot.discoveryourfantasy.entity.Image;
 
 import java.util.List;
 
+/**
+ * <h3>Интерфейс, предоставляющий методы работы с БД {@link ImageDatabase}</h3>
+ *
+ * @author ivan
+ * @version 0.0.1
+ */
 @Dao
 public interface ImageDao {
 

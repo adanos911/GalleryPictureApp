@@ -11,6 +11,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 
 //TODO: Test fragment without realizations
+/**
+ * <h3>Test fragment</h3>
+ *
+ * @author ivan
+ * @version 0.0.1
+ */
 class ProfileFragment : Fragment() {
     lateinit var disconnectButton: Button
     lateinit var loginView: TextView

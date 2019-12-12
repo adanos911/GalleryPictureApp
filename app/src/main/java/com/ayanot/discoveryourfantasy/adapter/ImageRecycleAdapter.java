@@ -29,8 +29,21 @@ import com.squareup.picasso.Target;
 import java.lang.ref.WeakReference;
 import java.util.List;
 
+/**
+ * <h3>Класс-адаптер, отвечающий за помещение объектов {@link Image} в
+ * элементы recylceView {@link RecyclerView}</h3>
+ *
+ * @author ivan
+ * @version 0.0.1
+ */
 public class ImageRecycleAdapter extends RecyclerView.Adapter {
+    /**
+     * <p>Тип элемента, соответсвующий изображению</p>
+     */
     private final int VIEW_ITEM = 1;
+    /**
+     * <p>Тип элемента, соответсвующий загрузке</p>
+     */
     private final int VIEW_PROG = 0;
 
     private int visibleThreshold = 10;

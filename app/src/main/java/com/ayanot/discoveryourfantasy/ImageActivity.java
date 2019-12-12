@@ -31,6 +31,13 @@ import java.net.URL;
 
 import static com.ayanot.discoveryourfantasy.MainActivity.REST_CLIENT;
 
+/**
+ * <h3>Класс-активити, строится на основании {@link R.layout#activity_image}
+ * Отображает одно конкретно выбранное изображение из галереии</h3>
+ *
+ * @author ivan
+ * @version 0.0.1
+ */
 public class ImageActivity extends AppCompatActivity {
     private static final String TAG = "ImageActivity";
 
@@ -83,7 +90,11 @@ public class ImageActivity extends AppCompatActivity {
         return true;
     }
 
-    static class AsyncDownloadToStoreTask extends AsyncTask<Image, Void, Void> {
+    /**
+     * <h3>Вложенный статический класс, создающий асинхронный поток, для
+     * загрузки изображения из yandex disk в память телефона</h3>
+     */
+    private static class AsyncDownloadToStoreTask extends AsyncTask<Image, Void, Void> {
         Bitmap bitmap;
         private final WeakReference<ImageActivity> imageActivityWeakReference;
         private NotificationProgressBar notificationProgressBar;
@@ -124,7 +135,12 @@ public class ImageActivity extends AppCompatActivity {
         }
     }
 
-    static class AsyncDownloadImageTask extends AsyncTask<Image, Void, String> {
+    /**
+     * <h3>Вложенный статический класс, создающий асинхронный поток, для загрузки
+     * изображения выбранного в галерее, в размере XL
+     * Запускается при старте данной активити</h3>
+     */
+    private static class AsyncDownloadImageTask extends AsyncTask<Image, Void, String> {
         private final WeakReference<LinearLayout> linLaDownloadProgress;
         private final WeakReference<ImageView> imageViewWeakReference;
         private final Picasso picasso;

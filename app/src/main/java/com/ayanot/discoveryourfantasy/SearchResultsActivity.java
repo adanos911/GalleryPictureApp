@@ -11,6 +11,16 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.ayanot.discoveryourfantasy.helpUtil.SearchSuggestionProvider;
 
+/**
+ * <h3>Класс-активити, строится на основании {@link R.layout#activity_search_results}
+ * Предназачен для отображения результатов поиска изображения на disk</h3>
+ *
+ * <p>Поиск осуществляется с помощью регулярного выражения, проверяющего названия
+ * изображения на вхождения введенной последовательности букв</p>
+ *
+ * @author ivan
+ * @version 0.0.1
+ */
 public class SearchResultsActivity extends AppCompatActivity {
 
     Toolbar toolbar;

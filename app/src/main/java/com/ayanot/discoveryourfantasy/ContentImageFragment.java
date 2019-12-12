@@ -22,6 +22,13 @@ import com.ayanot.discoveryourfantasy.remote.yandexDisk.AsyncLoadImgTask;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * <h3>Абстрактный класс, содержащий основную логику для фрагмента с recycleVIew,
+ * для просмотра галереи изображений</h3>
+ *
+ * @author ivan
+ * @version 0.0.1
+ */
 public abstract class ContentImageFragment extends Fragment
         implements AsyncLoadImgTask.OnTaskCompleted {
     private RecyclerView recyclerView;
@@ -46,6 +53,12 @@ public abstract class ContentImageFragment extends Fragment
             imageList = new ArrayList<>();
     }
 
+    /**
+     * <p>Инициализирует recycleVIew с помощию {@link StaggeredGridLayoutManager},
+     * содержащий 2 колонки изображений в вертикальном порядке</p>
+     *
+     * @param recyclerView -
+     */
     protected void initRecycleView(RecyclerView recyclerView) {
         StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager
                 (2, StaggeredGridLayoutManager.VERTICAL);
@@ -75,10 +88,10 @@ public abstract class ContentImageFragment extends Fragment
                 getRecycleAdapter().clear();
                 offset = 0;
                 pageNumber = 1;
-                swipeRefreshLayout.setRefreshing(false);
             } else
                 Toast.makeText(getActivity(), getResources().getString
                         (R.string.toast_network_connection_text), Toast.LENGTH_SHORT).show();
+            swipeRefreshLayout.setRefreshing(false);
         });
     }
 

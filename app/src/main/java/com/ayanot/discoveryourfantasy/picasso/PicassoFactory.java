@@ -10,6 +10,12 @@ import com.squareup.picasso.UrlConnectionDownloader;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 
+/**
+ * <h3>Класс, создающий объект {@link Picasso} для работы с изображениями</h3>
+ *
+ * @author ivan
+ * @version 0.0.1
+ */
 public class PicassoFactory {
 
     public static Picasso getInstance(Context context) {

@@ -11,6 +11,15 @@ import androidx.room.PrimaryKey;
 
 import java.util.Arrays;
 
+/**
+ * <h3>Класс-сущность, представляющий изображение</h3>
+ *
+ * <p>Реализует интерфейс {@link Parcelable}, который позволяет сериализовать
+ * объекты(более оптимизирован под Android, чем Serializable)</p>
+ *
+ * @author ivan
+ * @version 0.0.1
+ */
 @Entity(tableName = "cache_images")
 public class Image implements Parcelable {
 
@@ -27,17 +36,35 @@ public class Image implements Parcelable {
             return new Image[size];
         }
     };
+    /**
+     * <p>Уникальный идентификатор, для записи в БД</p>
+     */
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
     private long id;
+    /**
+     * <p>Название изображения</p>
+     */
     @ColumnInfo(name = "name")
     private String name;
+    /**
+     * <p>URL для загрузки превью изображения</p>
+     */
     @ColumnInfo(name = "preview")
     private String preview;
+    /**
+     * <p>URL для загрузки изображения в оригинальном формате</p>
+     */
     @ColumnInfo(name = "href")
     private String href;
+    /**
+     * <p>Путь до изображения на yandex disk</p>
+     */
     @ColumnInfo(name = "path")
     private String path;
+    /**
+     * <p>Изображение, сохранненое как массив байтов</p>
+     */
     @ColumnInfo(name = "image", typeAffinity = ColumnInfo.BLOB)
     private byte[] bitmap;
 

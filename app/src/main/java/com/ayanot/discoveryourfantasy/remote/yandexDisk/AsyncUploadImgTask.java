@@ -27,7 +27,7 @@ public class AsyncUploadImgTask extends AsyncTask<File, Void, String> {
     @Override
     protected String doInBackground(File... files) {
         try {
-            Uploader.uploadFile("/ala/" + files[0].getName(), files[0]);
+            Uploader.uploadFile("/" + files[0].getName(), files[0]);
             return files[0].getName();
         } catch (IOException | ServerException e) {
             e.printStackTrace();

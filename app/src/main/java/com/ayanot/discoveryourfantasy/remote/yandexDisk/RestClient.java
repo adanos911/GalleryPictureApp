@@ -9,6 +9,13 @@ import com.yandex.disk.rest.retrofit.CloudApi;
 
 import java.lang.reflect.Field;
 
+/**
+ * <h3>Класс клиента, для работы с Rest API yandex disk,
+ * расширяющий {@link com.yandex.disk.rest.RestClient}</h3>
+ *
+ * @author ivan
+ * @version 0.0.1
+ */
 public class RestClient extends com.yandex.disk.rest.RestClient {
     private CloudApi cloudApi;
 

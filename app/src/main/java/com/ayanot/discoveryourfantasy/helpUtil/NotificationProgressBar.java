@@ -15,6 +15,13 @@ import com.ayanot.discoveryourfantasy.R;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
 
+/**
+ * <h3>Класс, создающий прогресс при загрузке(выгрузке) изображения на(с)
+ * yandex disk</h3>
+ *
+ * @author ivan
+ * @version 0.0.1
+ */
 public class NotificationProgressBar {
     public static final String OPEN_NOTIF_MES = "OPEN_AFTER_NOTIFICATION";
     private static int maxProgress = 100;

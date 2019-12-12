@@ -6,6 +6,12 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+/**
+ * <h3>Класс, реализующий декорации для каждого элемента в recycleVIew</h3>
+ *
+ * @author ivan
+ * @version 0.0.1
+ */
 public class SpacesItemDecoration extends RecyclerView.ItemDecoration {
     private final int mSpaceVertical;
     private final int mSpaceHorizontal;

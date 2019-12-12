@@ -5,6 +5,13 @@ import android.os.AsyncTask;
 
 import java.lang.ref.WeakReference;
 
+/**
+ * <h3>Класс, создающий асинхронный процесс,
+ * очищающий кеш изображений в БД</h3>
+ *
+ * @author ivan
+ * @version 0.0.1
+ */
 public class AsyncCleaningImageCacheTask extends AsyncTask<Void, Void, Integer> {
 
     private final WeakReference<Context> referenceContext;

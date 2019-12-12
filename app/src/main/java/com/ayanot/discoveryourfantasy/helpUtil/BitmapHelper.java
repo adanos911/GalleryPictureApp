@@ -6,6 +6,12 @@ import android.graphics.BitmapFactory;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+/**
+ * <h3>Класс, дял работы с bitmap изображениями</h3>
+ *
+ * @author ivan
+ * @version 0.0.1
+ */
 public class BitmapHelper {
 
     public static byte[] getBytesArray(Bitmap bitmap, Bitmap.CompressFormat compressFormat) {
