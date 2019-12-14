@@ -4,11 +4,9 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
-import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
@@ -222,11 +220,6 @@ public class ImageRecycleAdapter extends RecyclerView.Adapter {
                         listener.onItemClick(itemView, position);
                 }
             });
-            new Handler().postDelayed(() -> {
-                itemView.setVisibility(View.VISIBLE);
-                itemView.setAnimation(AnimationUtils
-                        .loadAnimation(context, R.anim.item_animation));
-            }, 100);
             setIsRecyclable(true);
         }
     }

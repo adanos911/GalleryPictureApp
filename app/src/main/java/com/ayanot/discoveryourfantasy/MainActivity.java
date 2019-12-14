@@ -185,19 +185,19 @@ public class MainActivity extends AppCompatActivity {
             switch (item.getItemId()) {
                 case R.id.navigation_library:
                     if (connectionDetector.isNetworkConnected()) {
-                        loadFragment(fragment1);
                         currentFragment = fragment1;
+                        loadFragment(currentFragment);
                     } else {
                         new AsyncLoadCacheTask(MainActivity.this).execute();
                     }
                     return true;
                 case R.id.navigation_last:
-                    loadFragment(fragment2);
                     currentFragment = fragment2;
+                    loadFragment(currentFragment);
                     return true;
                 case R.id.navigation_profile:
-                    loadFragment(fragment3);
                     currentFragment = fragment3;
+                    loadFragment(currentFragment);
                     return true;
             }
             return false;

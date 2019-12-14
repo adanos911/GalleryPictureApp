@@ -55,22 +55,6 @@ public class NotificationProgressBar {
         notificationManager.notify(id, notification);
     }
 
-//    public void start() {
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                int progress = 0;
-//                while (progress < maxProgress) {
-//                    SystemClock.sleep(300);
-//                    progress += 10;
-//                    builder.setProgress(maxProgress, progress, false)
-//                            .setContentText(progress + " of " + maxProgress);
-//                    notificationManager.notify(1, builder.build());
-//                }
-//            }
-//        }).start();
-//    }
-
     public void end(String title, String text) {
         builder.setProgress(0, 10, false)
                 .setContentTitle(title)
