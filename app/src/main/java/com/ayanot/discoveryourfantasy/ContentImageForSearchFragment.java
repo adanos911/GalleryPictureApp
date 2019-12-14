@@ -68,8 +68,8 @@ public class ContentImageForSearchFragment extends ContentImageFragment {
             getLoadImg();
         recycleAdapter.setOnLoadMoreListener(() -> {
             if (!isNetworkConnection())
-                Toast.makeText(getActivity(), "Please check your internet connection",
-                        Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), getResources().getString(
+                        R.string.toast_network_connection_text), Toast.LENGTH_SHORT).show();
         });
     }
 }

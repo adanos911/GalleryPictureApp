@@ -59,7 +59,16 @@ public class AsyncLoadImgTask extends AsyncTask<String, Void, List<Image>> {
         listener.get().onTaskCompleted(images);
     }
 
+    /**
+     * <h3>Interface definition for a callback to be invoked when a
+     * {@link AsyncLoadImgTask#doInBackground(String...)} is ended</h3>
+     */
     public interface OnTaskCompleted {
+        /**
+         * <p>Called when task is completed</p>
+         *
+         * @param responseImage - list Image loaded from yandex disk
+         */
         void onTaskCompleted(List<Image> responseImage);
     }
 }

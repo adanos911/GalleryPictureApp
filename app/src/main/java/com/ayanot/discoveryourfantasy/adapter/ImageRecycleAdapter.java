@@ -167,6 +167,44 @@ public class ImageRecycleAdapter extends RecyclerView.Adapter {
         }
     }
 
+    /**
+     * <h3>Interface definition for a callback to be invoked when a item View
+     * is clicked</h3>
+     */
+    public interface OnItemClickListener {
+        /**
+         * <p>Called when a item View is clicked</p>
+         *
+         * @param itemView - item View in recycleView
+         * @param position - position for item in recycleView
+         */
+        void onItemClick(View itemView, int position);
+    }
+
+    public void setLoaded() {
+        this.loading = false;
+    }
+
+    public void setOnLoadMoreListener(OnLoadMoreListener onLoadMoreListener) {
+        this.onLoadMoreListener = onLoadMoreListener;
+    }
+
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.listener = listener;
+    }
+
+    /**
+     * <h3>Interface definition for a callback to be invoked when a recycleView
+     * is scrolled</h3>
+     */
+    public interface OnLoadMoreListener {
+        void onLoadMore();
+    }
+
+    /**
+     * <p>Асинхронный процесс, загружающий первые изображения в кеш,
+     * для оффлайн запуска приложения</p>
+     */
     private static class AsyncSaveImageToDatabase extends AsyncTask<Image, Void, Void> {
         private final WeakReference<Context> contextWeakReference;
 
@@ -187,26 +225,21 @@ public class ImageRecycleAdapter extends RecyclerView.Adapter {
         }
     }
 
-    public void setLoaded() {
-        this.loading = false;
+    /**
+     * <p>Класс holder для хранения item являющегося progress Bar</p>
+     */
+    static class ProgressViewHolder extends RecyclerView.ViewHolder {
+        final ProgressBar progressBar;
+
+        ProgressViewHolder(@NonNull View itemView) {
+            super(itemView);
+            progressBar = itemView.findViewById(R.id.progressBar1);
+        }
     }
 
-    public void setOnLoadMoreListener(OnLoadMoreListener onLoadMoreListener) {
-        this.onLoadMoreListener = onLoadMoreListener;
-    }
-
-    public void setOnItemClickListener(OnItemClickListener listener) {
-        this.listener = listener;
-    }
-
-    public interface OnItemClickListener {
-        void onItemClick(View itemView, int position);
-    }
-
-    public interface OnLoadMoreListener {
-        void onLoadMore();
-    }
-
+    /**
+     * <p>Класс holder для хранения item являющегося изображением</p>
+     */
     class ImgLoadViewHolder extends RecyclerView.ViewHolder {
         final ImageView imageView;
 
@@ -222,15 +255,6 @@ public class ImageRecycleAdapter extends RecyclerView.Adapter {
                 }
             });
             setIsRecyclable(true);
-        }
-    }
-
-    static class ProgressViewHolder extends RecyclerView.ViewHolder {
-        final ProgressBar progressBar;
-
-        ProgressViewHolder(@NonNull View itemView) {
-            super(itemView);
-            progressBar = itemView.findViewById(R.id.progressBar1);
         }
     }
 }

@@ -81,6 +81,11 @@ public abstract class ContentImageFragment extends Fragment
         recyclerView.addItemDecoration(new SpacesItemDecoration(4, 16));
     }
 
+    /**
+     * <p>Устанавливает поведение recycleView при обновлении</p>
+     *
+     * @param view - {@link SwipeRefreshLayout}
+     */
     protected void setRefreshLayout(View view) {
         swipeRefreshLayout = view.findViewById(R.id.contentImageFragment);
         swipeRefreshLayout.setOnRefreshListener(() -> {
@@ -99,6 +104,14 @@ public abstract class ContentImageFragment extends Fragment
         return new ConnectionDetector(getActivity()).isNetworkConnected();
     }
 
+    /**
+     * <p>Метод, устанавливающий поведение, при прокрутке recycleView
+     *  Определяеться с помощью listener {@link ImageRecycleAdapter.OnLoadMoreListener},
+     *  и реализации его метода
+     *  {@link ImageRecycleAdapter.OnLoadMoreListener#onLoadMore()}</p>
+     *
+     * @param recycleAdapter
+     */
     protected abstract void setLoadMoreListener(ImageRecycleAdapter recycleAdapter);
 
     @Override

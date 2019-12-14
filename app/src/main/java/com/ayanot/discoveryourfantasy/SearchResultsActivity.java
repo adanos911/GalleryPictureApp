@@ -45,6 +45,14 @@ public class SearchResultsActivity extends AppCompatActivity {
         return true;
     }
 
+    /**
+     * <p>Перехват запроса поиска, если Intent = ACTION_SEARCH
+     * Сохраняет историю запросов с помощью
+     * {@link SearchRecentSuggestions}</p>
+     *
+     * @param intent - интент прищедший с {@link MainActivity}, и содержащий
+     *               query для поиска
+     */
     private void handleIntent(Intent intent) {
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             query = intent.getStringExtra(SearchManager.QUERY);
