@@ -213,6 +213,7 @@ public class ImageRecycleAdapter extends RecyclerView.Adapter {
         ImgLoadViewHolder(final View itemView) {
             super(itemView);
             imageView = itemView.findViewById(R.id.imageView);
+            setIsRecyclable(false);
             imageView.setOnClickListener(v -> {
                 if (listener != null) {
                     int position = getAdapterPosition();
