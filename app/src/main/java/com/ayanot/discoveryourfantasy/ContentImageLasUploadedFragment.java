@@ -24,15 +24,17 @@ import com.ayanot.discoveryourfantasy.remote.yandexDisk.AsyncLoadImgTask;
 public class ContentImageLasUploadedFragment extends ContentImageFragmentImp {
 
     private RecyclerView recyclerView;
+    private View view;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.content_image_fragment, container, false);
-
-        setImageDatabase(ImageDatabase.getInstance(getContext()));
-        setParameters(view);
+        if (view == null) {
+            view = inflater.inflate(R.layout.content_image_fragment, container, false);
+            setImageDatabase(ImageDatabase.getInstance(getContext()));
+            setParameters(view);
+        }
 
         return view;
     }
@@ -70,8 +72,8 @@ public class ContentImageLasUploadedFragment extends ContentImageFragmentImp {
                 setPageNumber(++i);
                 getLoadImg();
             } else {
-                Toast.makeText(getActivity(), "Please check your internet connection",
-                        Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), getResources().getString
+                        (R.string.toast_network_connection_text), Toast.LENGTH_SHORT).show();
             }
         });
     }
