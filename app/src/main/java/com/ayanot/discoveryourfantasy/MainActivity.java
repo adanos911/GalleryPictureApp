@@ -120,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
             startActivityForResult(intent, 99);
         } else {
             initClient();
-            checkOpenAfterNotificationClick();
+            openSelectedFragment();
         }
     }
 
@@ -212,7 +212,7 @@ public class MainActivity extends AppCompatActivity {
      *  нового изображения, то активити переключается на фрагмент
      *  {@link ContentImageLasUploadedFragment}</p>
      */
-    private void checkOpenAfterNotificationClick() {
+    private void openSelectedFragment() {
         String mes = getIntent().getStringExtra(NotificationProgressBar.OPEN_NOTIF_MES);
         if (mes != null && mes.equals("Uploading")) {
             loadFragment(fragment2);
