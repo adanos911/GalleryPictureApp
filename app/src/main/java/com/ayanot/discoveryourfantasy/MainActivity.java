@@ -54,7 +54,6 @@ import java.util.List;
  */
 public class MainActivity extends AppCompatActivity {
     public static final String CLIENT_ID = BuildConfig.CLIENT_ID;
-    public static final String DISK_API_URL = "https://cloud-api.yandex.net";
     public static String TOKEN;//BuildConfig.TOKEN;
     public static String USER_NAME;//BuildConfig.USER_NAME;
     public static RestClient REST_CLIENT;
@@ -72,9 +71,9 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * <p>Метод, вызывающийся при создании активити.
-     *  Инициализирует соответсвующий layout и создает объекты фрагментов,
-     *  для контейнера фрагментов.
-     *  Устанавливает в качестве текущего фрагмента {@link ContentImageFragmentImp}</p>
+     * Инициализирует соответсвующий layout и создает объекты фрагментов,
+     * для контейнера фрагментов.
+     * Устанавливает в качестве текущего фрагмента {@link ContentImageFragmentImp}</p>
      *
      * @param savedInstanceState - сохраненное состояние активити
      */
@@ -98,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * <p>Инициализирует клиента {@link MainActivity#REST_CLIENT},
-     *  для работы с Rest API yandex disk</p>
+     * для работы с Rest API yandex disk</p>
      */
     private void initClient() {
         TOKEN = getSharedPreferences(InitActivity.TOKEN_PREF, MODE_PRIVATE)
@@ -124,9 +123,19 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
+    public void refreshData() {
+//        if (Build.VERSION_CODES.KITKAT <= Build.VERSION.SDK_INT) {
+//            ((ActivityManager) getSystemService(ACTIVITY_SERVICE))
+//                    .clearApplicationUserData(); // note: it has a return value!
+//        }
+        finish();
+        startActivity(getIntent());
+    }
+
     /**
      * <p>Устанавливает для данной активити меню, в нашем случае, это верхняя панель.
-     *  Меню определено в файле {@link R.menu#menu_main}</p>
+     * Меню определено в файле {@link R.menu#menu_main}</p>
      *
      * @param menu - меню в котором размещаются элементы
      * @return - true или false(надо отображать меню или нет)
@@ -164,7 +173,7 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * <p>Загрузка фрагмента в котейнер фрагментов {@link R.id#frame_container},
-     *  и добавление его в backStack, для возможности возврата на него</p>
+     * и добавление его в backStack, для возможности возврата на него</p>
      *
      * @param fragment - фрагмент на который следует переключиться
      */
@@ -177,7 +186,7 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * <p>Добавление нижней навигационной панели, для переключения между фрагментами,
-     *  панель определена {@link R.id#navigationPanel}</p>
+     * панель определена {@link R.id#navigationPanel}</p>
      */
     private void addBottomNavigationView() {
         navigationView = findViewById(R.id.navigationPanel);
@@ -206,11 +215,11 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * <p>Метод загружающий нужный фрагмент, после выхода активити из состояния onPause
-     *  При стандартном открытие активити открывается текущий фрагмент
-     *  {@link MainActivity#currentFragment},
-     *  Если активити была выведена из состояния pause, с помощью клика по загрузке
-     *  нового изображения, то активити переключается на фрагмент
-     *  {@link ContentImageLasUploadedFragment}</p>
+     * При стандартном открытие активити открывается текущий фрагмент
+     * {@link MainActivity#currentFragment},
+     * Если активити была выведена из состояния pause, с помощью клика по загрузке
+     * нового изображения, то активити переключается на фрагмент
+     * {@link ContentImageLasUploadedFragment}</p>
      */
     private void openSelectedFragment() {
         String mes = getIntent().getStringExtra(NotificationProgressBar.OPEN_NOTIF_MES);
@@ -225,7 +234,7 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * <h3>Вложенный статический класс, для создания асинхронного потока загрузки
-     *  кеша изображений, если при старте приложения нет соединения с интернетом</h3>
+     * кеша изображений, если при старте приложения нет соединения с интернетом</h3>
      */
     private static class AsyncLoadCacheTask extends AsyncTask<Void, Void, List<Image>> {
         private final WeakReference<MainActivity> mainActivityWeakReference;

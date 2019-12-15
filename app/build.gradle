@@ -16,9 +16,9 @@ android {
     buildTypes {
 
         buildTypes.each {
-            it.buildConfigField('String', 'TOKEN', token)
+//            it.buildConfigField('String', 'TOKEN', token)
             it.buildConfigField('String', 'CLIENT_ID', clientId)
-            it.buildConfigField('String', 'USER_NAME', userName)
+//            it.buildConfigField('String', 'USER_NAME', userName)
         }
 
         release {
